@@ -2,7 +2,7 @@
 	"rewrites": [
 		{
 			"source": "/api/:path*",
-			"destination": "https://user-management-production-959c.up.railway.app/api/:path*"
+			"destination": "https://cv-management-csia.onrender.com/:path*"
 		},
 		{
 			"source": "/(.*)",

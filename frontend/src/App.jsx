@@ -5,8 +5,7 @@ import Navbar from './components/Navbar'
 import Home from './pages/Home'
 
 // TODO:
-// axios.defaults.baseURL =
-// 	'https://user-management-production-959c.up.railway.app'
+axios.defaults.baseURL = 'https://cv-management-csia.onrender.com'
 
 function App() {
 	const [users, setUsers] = useState([])
