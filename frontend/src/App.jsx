@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import Navbar from './components/Navbar'
+// import Navbar from './components/Navbar'
+import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
 import Home from './pages/Home'
 
 // TODO:
@@ -36,7 +37,16 @@ function App() {
 
 	return (
 		<Router>
-			<Navbar />
+			{/* <Navbar /> */}
+			<header>
+				<Show when="signed-out">
+					<SignInButton />
+					<SignUpButton />
+				</Show>
+				<Show when="signed-in">
+					<UserButton />
+				</Show>
+			</header>
 			<Routes>
 				<Route
 					path="/"
