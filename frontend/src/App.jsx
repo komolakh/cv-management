@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 // import Navbar from './components/Navbar'
 import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
@@ -13,19 +13,19 @@ function App() {
 	const [error, setError] = useState('')
 	const [loading, setLoading] = useState(true)
 
-	useEffect(() => {
-		const fetchUsers = async () => {
-			try {
-				const res = await axios.get('/api/users')
-				setUsers(res.data.users)
-				console.log(users)
-			} catch (err) {
-				console.log(err)
-				setError("Couldn't get users")
-			}
-		}
-		fetchUsers()
-	}, [users])
+	// useEffect(() => {
+	// 	const fetchUsers = async () => {
+	// 		try {
+	// 			const res = await axios.get('/api/users')
+	// 			setUsers(res.data.users)
+	// 			console.log(users)
+	// 		} catch (err) {
+	// 			console.log(err)
+	// 			setError("Couldn't get users")
+	// 		}
+	// 	}
+	// 	fetchUsers()
+	// }, [users])
 
 	if (loading) {
 		return <div>loading...</div>
