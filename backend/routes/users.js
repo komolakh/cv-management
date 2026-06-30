@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 		const { rows } = await pool.query('SELECT id, name FROM users')
 		res.json({ users: rows })
 	} catch (err) {
-		res.status(500).json({ message: 'Failed to fetch users' })
+		res.status(500).json({ message: err.message })
 	}
 })
 
