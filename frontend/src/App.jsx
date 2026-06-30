@@ -1,0 +1,51 @@
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+
+// TODO:
+// axios.defaults.baseURL =
+// 	'https://user-management-production-959c.up.railway.app'
+
+function App() {
+	const [users, setUsers] = useState([])
+	const [error, setError] = useState('')
+	const [loading, setLoading] = useState(true)
+
+	useEffect(() => {
+		const fetchUsers = async () => {
+			try {
+				const res = await axios.get('/api/users')
+				setUsers(res.data.users)
+				console.log(users)
+			} catch (err) {
+				console.log(err)
+				setError("Couldn't get users")
+			}
+		}
+		fetchUsers()
+	}, [users])
+
+	if (loading) {
+		return <div>loading...</div>
+	}
+
+	if (error) {
+		return <div>{error}</div>
+	}
+
+	return (
+		<Router>
+			<Navbar />
+			<Routes>
+				<Route
+					path="/"
+					element={<Home />}
+				/>
+			</Routes>
+		</Router>
+	)
+}
+
+export default App
