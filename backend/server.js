@@ -10,7 +10,7 @@ const app = express()
 // TODO:
 app.use(
 	cors({
-		origin: 'https://user-management-eight-gold.vercel.app',
+		origin: 'https://cv-management-nu.vercel.app',
 		credentials: true
 	})
 )
