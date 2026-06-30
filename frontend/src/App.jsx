@@ -11,7 +11,7 @@ axios.defaults.baseURL = 'https://cv-management-csia.onrender.com'
 function App() {
 	const [users, setUsers] = useState([])
 	const [error, setError] = useState('')
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 
 	// useEffect(() => {
 	// 	const fetchUsers = async () => {
