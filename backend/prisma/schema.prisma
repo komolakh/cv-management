@@ -1,0 +1,119 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CANDIDATE
+  RECRUITER
+  ADMINISTRATOR
+}
+
+enum CVStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum AttributeType {
+  STRING
+  TEXT
+  IMAGE
+  NUMERIC
+  DATE
+  PERIOD
+  BOOLEAN
+  DROPDOWN
+}
+
+model User {
+  id        String   @id 
+  email     String   @unique
+  firstName String   @default("")
+  lastName  String   @default("")
+  location  String   @default("")
+  photoUrl  String   @default("")
+  role      Role     @default(CANDIDATE)
+  version   Int      @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  cvs                    CV[]
+  profileAttributeValues ProfileAttributeValue[]
+  projects               Project[]
+}
+
+model AttributeLibrary {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category  String
+  name      String        @unique
+  type      AttributeType
+  createdAt DateTime      @default(now()) @db.Timestamptz
+
+  positionTemplateAttributes PositionTemplateAttribute[]
+  profileAttributeValues     ProfileAttributeValue[]
+}
+
+model Position {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String
+  accessRules Json     @default("{}")
+  projectTags String[] @default([])
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  cvs                        CV[]
+  positionTemplateAttributes PositionTemplateAttribute[]
+}
+
+model PositionTemplateAttribute {
+  positionId  String @db.Uuid
+  attributeId String @db.Uuid
+
+  attributeLibrary AttributeLibrary @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  position         Position         @relation(fields: [positionId], references: [id], onDelete: Cascade)
+
+  @@id([positionId, attributeId])
+}
+
+model ProfileAttributeValue {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String
+  attributeId String @db.Uuid
+  value       String @default("")
+
+  attributeLibrary AttributeLibrary @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, attributeId])
+}
+
+model Project {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String
+  name        String
+  startDate   DateTime  @db.Date
+  endDate     DateTime? @db.Date
+  description String    @default("")
+  tags        String[]  @default([])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CV {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String
+  positionId String   @db.Uuid
+  status     CVStatus @default(DRAFT)
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  position Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, positionId])
+}
