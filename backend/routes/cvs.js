@@ -16,9 +16,8 @@ router.get('/position/:positionId', async (req, res) => {
 		const position = await prisma.position.findUnique({
 			where: { id: positionId },
 			include: {
-				PositionTemplateAttribute: {
+				positionTemplateAttributes: {
 					include: {
-						AttributeLibrary: true,
 						attributeLibrary: true
 					}
 				}
