@@ -20,7 +20,7 @@ export default function Home() {
 		queryKey: ['homeMainData'],
 		queryFn: async () => {
 			const [statsRes, latestRes, popularRes, tagsRes] = await Promise.all([
-				axios.get('/api/public-stats').catch(() => ({ data: {} })),
+				axios.get('/api/positions/public-stats').catch(() => ({ data: {} })),
 				axios.get('/api/positions').catch(() => ({ data: [] })),
 				axios.get('/api/positions/popular').catch(() => ({ data: [] })),
 				axios.get('/api/positions/tags').catch(() => ({ data: [] }))
