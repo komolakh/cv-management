@@ -60,7 +60,7 @@ router.get('/position/:positionId', async (req, res) => {
 				where: {
 					userId,
 					attributeId: {
-						in: position.PositionTemplateAttribute.map(p => p.attributeId)
+						in: position.positionTemplateAttributes.map(p => p.attributeId)
 					}
 				}
 			}),
@@ -76,7 +76,7 @@ router.get('/position/:positionId', async (req, res) => {
 			})
 		])
 
-		const attributes = position.PositionTemplateAttribute.map(pta => ({
+		const attributes = position.positionTemplateAttributes.map(pta => ({
 			id: pta.attributeId,
 			attributeId: pta.attributeId,
 			value:
