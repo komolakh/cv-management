@@ -73,7 +73,7 @@ router.get('/popular', async (_, res) => {
 			select: {
 				id: true,
 				title: true,
-				_count: { select: { cvs: true, CVs: true } }
+				_count: { select: { cvs: true } }
 			},
 			orderBy: {
 				cvs: { _count: 'desc' }
