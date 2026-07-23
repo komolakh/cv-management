@@ -2,7 +2,7 @@
 	"rewrites": [
 		{
 			"source": "/api/:path*",
-			"destination": "/:path*"
+			"destination": "https://cv-backend-cfbk.onrender.com/:path*"
 		},
 		{
 			"source": "/(.*)",

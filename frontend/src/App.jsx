@@ -22,7 +22,8 @@ const queryClient = new QueryClient({
 	defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } }
 })
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || ''
+axios.defaults.baseURL =
+	import.meta.env.VITE_API_URL || 'https://cv-backend-cfbk.onrender.com'
 
 function AuthAndSyncHandler() {
 	const { getToken, isSignedIn, isLoaded: isAuthLoaded } = useAuth()
