@@ -1,19 +1,10 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import {
-	AlertCircle,
-	Edit2,
-	Filter,
-	Loader2,
-	Plus,
-	Search,
-	Trash2
-} from 'lucide-react'
+import { Edit2, Filter, Loader2, Plus, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -187,21 +178,6 @@ export default function AttributeLibraryPage() {
 					</Button>
 				)}
 			</div>
-
-			{error && (
-				<Alert variant="destructive">
-					<AlertCircle className="h-4 w-4" />
-					<AlertTitle className="text-sm">
-						{t('attributeLibrary.errorTitle')}
-					</AlertTitle>
-					<AlertDescription className="text-sm">
-						{error.response?.data?.error ||
-							error.response?.data?.message ||
-							error.message ||
-							t('attributeLibrary.fetchError')}
-					</AlertDescription>
-				</Alert>
-			)}
 
 			<div className="flex flex-col sm:flex-row gap-3">
 				<div className="relative flex-1">

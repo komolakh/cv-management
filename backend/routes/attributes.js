@@ -1,6 +1,6 @@
 import express from 'express'
 import prisma from '../db.js'
-import { requireAdmin, requireAuth } from '../middleware/auth.js'
+import { requireAuth, requireRecruiterOrAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -95,8 +95,18 @@ async function deleteAttribute(req, res) {
 }
 
 router.get(['/', '/library'], requireAuth, getAttributes)
-router.post(['/', '/library'], requireAuth, requireAdmin, saveAttribute)
-router.put(['/:id', '/library/:id'], requireAuth, requireAdmin, saveAttribute)
-router.delete('/:id', requireAuth, requireAdmin, deleteAttribute)
+router.post(
+	['/', '/library'],
+	requireAuth,
+	requireRecruiterOrAdmin,
+	saveAttribute
+)
+router.put(
+	['/:id', '/library/:id'],
+	requireAuth,
+	requireRecruiterOrAdmin,
+	saveAttribute
+)
+router.delete('/:id', requireAuth, requireRecruiterOrAdmin, deleteAttribute)
 
 export default router
