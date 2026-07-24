@@ -53,8 +53,7 @@ const CATEGORIES = [
 const INITIAL_FORM_DATA = {
 	name: '',
 	type: 'STRING',
-	category: 'CERTIFICATION',
-	description: ''
+	category: 'CERTIFICATION'
 }
 
 export default function AttributeLibraryPage() {
@@ -144,8 +143,7 @@ export default function AttributeLibraryPage() {
 		setFormData({
 			name: attr?.name ?? INITIAL_FORM_DATA.name,
 			type: attr?.type ?? INITIAL_FORM_DATA.type,
-			category: attr?.category ?? INITIAL_FORM_DATA.category,
-			description: attr?.description ?? INITIAL_FORM_DATA.description
+			category: attr?.category ?? INITIAL_FORM_DATA.category
 		})
 		setIsModalOpen(true)
 	}
@@ -292,14 +290,12 @@ export default function AttributeLibraryPage() {
 									/>
 								</TableHead>
 							)}
+							<TableHead className="text-sm">Категория</TableHead>
 							<TableHead className="text-sm">
 								{t('attributeLibrary.tableName')}
 							</TableHead>
 							<TableHead className="text-sm">
 								{t('attributeLibrary.tableType')}
-							</TableHead>
-							<TableHead className="text-sm">
-								{t('attributeLibrary.tableDescription')}
 							</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -337,6 +333,9 @@ export default function AttributeLibraryPage() {
 												/>
 											</TableCell>
 										)}
+										<TableCell className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+											{attr.category}
+										</TableCell>
 										<TableCell className="font-medium text-sm">
 											{attr.name}
 										</TableCell>
@@ -344,9 +343,6 @@ export default function AttributeLibraryPage() {
 											<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
 												{attr.type}
 											</span>
-										</TableCell>
-										<TableCell className="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
-											{attr.description || '—'}
 										</TableCell>
 									</TableRow>
 								)
@@ -379,6 +375,33 @@ export default function AttributeLibraryPage() {
 						}}
 						className="space-y-4 py-2"
 					>
+						<div className="space-y-1.5">
+							<label className="text-xs font-semibold uppercase text-slate-500">
+								Категория
+							</label>
+							<Select
+								value={formData.category}
+								onValueChange={val =>
+									setFormData(p => ({ ...p, category: val }))
+								}
+							>
+								<SelectTrigger className="text-sm h-9">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									{CATEGORIES.map(cat => (
+										<SelectItem
+											key={cat}
+											value={cat}
+											className="text-sm"
+										>
+											{cat}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
 						<div className="space-y-1.5">
 							<label className="text-xs font-semibold uppercase text-slate-500">
 								{t('attributeLibrary.labelName')} *
@@ -417,47 +440,6 @@ export default function AttributeLibraryPage() {
 									))}
 								</SelectContent>
 							</Select>
-						</div>
-
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								Категория
-							</label>
-							<Select
-								value={formData.category}
-								onValueChange={val =>
-									setFormData(p => ({ ...p, category: val }))
-								}
-							>
-								<SelectTrigger className="text-sm h-9">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									{CATEGORIES.map(cat => (
-										<SelectItem
-											key={cat}
-											value={cat}
-											className="text-sm"
-										>
-											{cat}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelDescription')}
-							</label>
-							<Input
-								value={formData.description}
-								onChange={e =>
-									setFormData(p => ({ ...p, description: e.target.value }))
-								}
-								placeholder="..."
-								className="text-sm h-9"
-							/>
 						</div>
 
 						<DialogFooter className="pt-2">
