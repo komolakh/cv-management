@@ -39,7 +39,7 @@ async function getAttributes(req, res) {
 async function saveAttribute(req, res) {
 	try {
 		const { id } = req.params
-		const { name, type, category, options, version } = req.body
+		const { name, type, category, options } = req.body
 
 		if (!name?.trim()) {
 			return res.status(400).json({ error: 'Name is required' })
@@ -59,15 +59,11 @@ async function saveAttribute(req, res) {
 				where: { id }
 			})
 			if (!existing) return res.status(404).json({ error: 'Not found' })
-			if (version !== undefined && existing.version !== version) {
-				return res.status(409).json({ error: 'Version conflict' })
-			}
 
 			const updated = await prisma.attributeLibrary.update({
 				where: { id },
 				data: {
-					...data,
-					version: { increment: 1 }
+					...data
 				}
 			})
 			return res.json(updated)
