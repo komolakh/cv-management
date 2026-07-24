@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 import {
 	Table,
@@ -14,6 +15,7 @@ import {
 
 export default function Home() {
 	const { t } = useTranslation()
+	const navigate = useNavigate()
 	const [searchQuery, setSearchQuery] = useState('')
 
 	const { data = {}, isLoading } = useQuery({
@@ -125,9 +127,7 @@ export default function Home() {
 										filteredPositions.map(pos => (
 											<TableRow
 												key={pos.id}
-												onClick={() =>
-													alert(t('actions.buildCvAlert', { title: pos.title }))
-												}
+												onClick={() => navigate(`/cv/${pos.id}`)}
 												className="cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
 											>
 												<TableCell className="font-semibold text-sm">
@@ -167,9 +167,7 @@ export default function Home() {
 									{popularPositions.slice(0, 5).map((pos, index) => (
 										<TableRow
 											key={pos.id}
-											onClick={() =>
-												alert(t('actions.buildCvAlert', { title: pos.title }))
-											}
+											onClick={() => navigate(`/cv/${pos.id}`)}
 											className="cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
 										>
 											<TableCell className="text-center font-bold text-slate-400 text-sm">

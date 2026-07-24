@@ -372,7 +372,7 @@ export default function AttributeLibraryPage() {
 					>
 						<div className="space-y-1.5">
 							<label className="text-xs font-semibold uppercase text-slate-500">
-								Категория
+								{t('attributeLibrary.labelCategory')}
 							</label>
 							<Select
 								value={formData.category}
@@ -399,7 +399,7 @@ export default function AttributeLibraryPage() {
 
 						<div className="space-y-1.5">
 							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelName')} *
+								{t('attributeLibrary.labelName')}
 							</label>
 							<Input
 								required
@@ -414,7 +414,7 @@ export default function AttributeLibraryPage() {
 
 						<div className="space-y-1.5">
 							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelType')} *
+								{t('attributeLibrary.labelType')}
 							</label>
 							<Select
 								value={formData.type}
