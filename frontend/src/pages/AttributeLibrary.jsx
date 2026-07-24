@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Filter, Loader2, Plus, Search, Trash2 } from 'lucide-react'
+import { Filter, Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -150,6 +150,14 @@ export default function AttributeLibraryPage() {
 		setIsModalOpen(true)
 	}
 
+	const handleEditSelected = () => {
+		if (selectedIds.length !== 1) return
+		const targetAttr = attributes.find(a => a.id === selectedIds[0])
+		if (targetAttr) {
+			handleOpenModal(targetAttr)
+		}
+	}
+
 	const filteredAttributes = attributes.filter(attr => {
 		const matchesSearch = attr.name
 			?.toLowerCase()
@@ -245,6 +253,17 @@ export default function AttributeLibraryPage() {
 						{t('attributeLibrary.selectedCount') || 'selected'}
 					</span>
 					<div className="flex items-center gap-2">
+						{selectedIds.length === 1 && (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleEditSelected}
+								className="h-8 text-xs px-2.5 bg-white dark:bg-slate-900"
+							>
+								<Pencil className="h-3.5 w-3.5 mr-1.5" />
+								{t('attributeLibrary.btnEditSelected') || 'Edit'}
+							</Button>
+						)}
 						<Button
 							variant="destructive"
 							size="sm"
