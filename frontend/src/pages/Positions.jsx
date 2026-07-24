@@ -481,9 +481,7 @@ export default function PositionsPage() {
 								return (
 									<TableRow
 										key={pos.id}
-										onClick={() =>
-											(window.location.href = `/positions/${pos.id}`)
-										}
+										onClick={() => (window.location.href = `/cv/${pos.id}`)}
 										className={`cursor-pointer transition-colors ${
 											isSelected
 												? 'bg-indigo-50/40 dark:bg-indigo-950/20'

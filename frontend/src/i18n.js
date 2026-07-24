@@ -116,38 +116,46 @@ const resources = {
 				noTags: 'tags not specified'
 			},
 			positionsPage: {
-				title: 'Position Templates',
-				btnCreate: 'Create Position',
-				searchPlaceholder: 'Search by template title...',
 				loading: 'Loading positions...',
-				noPositionsFound:
-					'No positions found. Adjust your search or add a new template.',
-				deleteConfirm: 'Are you sure you want to delete this position?',
-				maxProjectsLabel: 'Max projects in CV: {{count}}',
-				projectTagsLabel: 'Project matching tags:',
-				requiredAttributesLabel: 'Required attributes ({{count}}):',
-				btnDiscussion: 'Discussion',
+				title: 'Positions Management',
+				btnCreate: 'Create Position',
+				searchPlaceholder: 'Search positions...',
+				noPositionsFound: 'No positions found',
+				deleteConfirm:
+					'Are you sure you want to delete the selected positions?',
+				tableColTitle: 'Title',
+				tableColDesc: 'Description',
+				tableColAccess: 'Access',
+				tableColTags: 'Tags',
+				tableColAttrs: 'Attributes',
+				selector: {
+					title: 'Attribute Library',
+					selectedCount_zero: 'Selected: 0',
+					selectedCount_one: 'Selected: 1',
+					selectedCount_other: 'Selected: {{count}}',
+					searchPlaceholder: 'Search attributes...',
+					loading: 'Loading attributes...',
+					empty: 'No attributes found'
+				},
 				dialog: {
-					title: 'New Position Template',
-					description:
-						'Create a job template, select the required knowledge attributes, and define project selection criteria.',
-					fieldName: 'Position Title',
-					fieldNamePlaceholder: 'e.g. Senior Frontend Engineer (React)',
-					fieldDesc: 'Short Description',
-					fieldDescPlaceholder:
-						'Describe the technology stack or key business requirements...',
-					fieldMaxProjects: 'Max projects in CV',
-					fieldTags: 'Project tags (comma separated)',
-					fieldTagsPlaceholder: 'react, typescript, web3',
+					title: 'New Position',
+					description: 'Fill in the details to create a new position.',
+					fieldName: 'Title',
+					fieldNamePlaceholder: 'e.g. Frontend Developer',
+					fieldDesc: 'Description',
+					fieldDescPlaceholder: 'Brief description of the position...',
+					fieldMaxProjects: 'Max Projects',
+					fieldTags: 'Project Tags',
+					fieldTagsPlaceholder: 'react, typescript, node',
 					btnCancel: 'Cancel',
 					btnSubmit: 'Create'
 				},
-				selector: {
-					title: 'Required job attributes',
-					selectedCount: 'Selected: {{count}}',
-					searchPlaceholder: 'Search attributes (Hard skills, experience...)',
-					loading: 'Loading library...',
-					empty: 'No attributes found'
+				toolbar: {
+					selectedCount_zero: 'Selected positions: 0',
+					selectedCount_one: 'Selected positions: 1',
+					selectedCount_other: 'Selected positions: {{count}}',
+					btnDuplicate: 'Duplicate',
+					btnDelete: 'Delete'
 				}
 			},
 			profile: {
@@ -321,38 +329,45 @@ const resources = {
 				noTags: 'теги не установлены'
 			},
 			positionsPage: {
-				title: 'Шаблоны позиций',
+				loading: 'Загрузка позиций...',
+				title: 'Управление позициями',
 				btnCreate: 'Создать позицию',
-				searchPlaceholder: 'Поиск по названию шаблона...',
-				loading: 'Загрузка шаблонов...',
-				noPositionsFound:
-					'Позиций не найдено. Измените параметры поиска или добавьте новый шаблон.',
-				deleteConfirm: 'Вы уверены, что хотите удалить эту позицию?',
-				maxProjectsLabel: 'Максимум проектов в CV: {{count}}',
-				projectTagsLabel: 'Теги подбора проектов:',
-				requiredAttributesLabel: 'Обязательные атрибуты ({{count}}):',
-				btnDiscussion: 'Обсуждение',
+				searchPlaceholder: 'Поиск позиций...',
+				noPositionsFound: 'Позиции не найдены',
+				deleteConfirm: 'Вы уверены, что хотите удалить выбранные позиции?',
+				tableColTitle: 'Название',
+				tableColDesc: 'Описание',
+				tableColAccess: 'Доступ',
+				tableColTags: 'Теги',
+				tableColAttrs: 'Атрибуты',
+				selector: {
+					title: 'Библиотека атрибутов',
+					selectedCount_zero: 'Выбрано: 0',
+					selectedCount_one: 'Выбрано: 1',
+					selectedCount_other: 'Выбрано: {{count}}',
+					searchPlaceholder: 'Поиск атрибутов...',
+					loading: 'Загрузка атрибутов...',
+					empty: 'Атрибуты не найдены'
+				},
 				dialog: {
-					title: 'Новый шаблон позиции',
-					description:
-						'Создайте шаблон вакансии, выберите требуемые атрибуты знаний и задайте критерии отбора проектов.',
-					fieldName: 'Название позиции',
-					fieldNamePlaceholder: 'Например: Senior Frontend Engineer (React)',
-					fieldDesc: 'Краткое описание',
-					fieldDescPlaceholder:
-						'Опишите стек технологий или ключевые бизнес-требования...',
-					fieldMaxProjects: 'Макс. проектов в CV',
-					fieldTags: 'Теги проектов (через запятую)',
-					fieldTagsPlaceholder: 'react, typescript, web3',
+					title: 'Новая позиция',
+					description: 'Заполните данные для создания новой позиции.',
+					fieldName: 'Название',
+					fieldNamePlaceholder: 'Например: Frontend Developer',
+					fieldDesc: 'Описание',
+					fieldDescPlaceholder: 'Краткое описание позиции...',
+					fieldMaxProjects: 'Макс. проектов',
+					fieldTags: 'Теги проектов',
+					fieldTagsPlaceholder: 'react, typescript, node',
 					btnCancel: 'Отмена',
 					btnSubmit: 'Создать'
 				},
-				selector: {
-					title: 'Требуемые атрибуты вакансии',
-					selectedCount: 'Выбрано: {{count}}',
-					searchPlaceholder: 'Поиск атрибутов (Hard-skills, опыт...)',
-					loading: 'Загрузка библиотеки...',
-					empty: 'Атрибуты не найдены'
+				toolbar: {
+					selectedCount_zero: 'Выбрано позиций: 0',
+					selectedCount_one: 'Выбрано позиций: 1',
+					selectedCount_other: 'Выбрано позиций: {{count}}',
+					btnDuplicate: 'Дублировать',
+					btnDelete: 'Удалить'
 				}
 			},
 			profile: {

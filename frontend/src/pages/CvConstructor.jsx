@@ -63,8 +63,7 @@ export default function CvConstructor() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['cvConstructor', positionId] })
 			setEditingAttrId(null)
-		},
-		onError: err => console.error(err)
+		}
 	})
 
 	const formatDate = dateString => {
@@ -81,30 +80,24 @@ export default function CvConstructor() {
 
 	if (isLoading) {
 		return (
-			<div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
-				<div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-				<p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-					{t('cvConstructor.loading')}
-				</p>
+			<div className="flex justify-center items-center min-h-[50vh]">
+				<div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
 			</div>
 		)
 	}
 
 	if (!data) {
 		return (
-			<div className="max-w-md mx-auto mt-12 p-6 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 shadow-sm text-center space-y-3">
-				<p className="text-red-500 font-semibold flex items-center justify-center gap-1.5 text-sm">
+			<div className="max-w-md mx-auto mt-12 p-6 border rounded-lg bg-background text-center space-y-3">
+				<p className="text-destructive font-medium flex items-center justify-center gap-1.5 text-sm">
 					<AlertCircle className="h-4 w-4" /> {t('cvConstructor.errorTitle')}
-				</p>
-				<p className="text-sm text-slate-500 dark:text-slate-400">
-					{t('cvConstructor.errorDesc')}
 				</p>
 				<Button
 					variant="outline"
-					onClick={() => navigate('/')}
-					className="w-full text-sm h-9"
+					onClick={() => navigate('/positions')}
+					className="w-full h-8 text-xs"
 				>
-					{t('cvConstructor.backToMain')}
+					{t('cvConstructor.backToPositions')}
 				</Button>
 			</div>
 		)
@@ -113,12 +106,12 @@ export default function CvConstructor() {
 	const { cv, attributes, projects, maxProjects, candidateInfo } = data
 
 	return (
-		<div className="max-w-4xl mx-auto space-y-6 p-6 text-slate-900 dark:text-slate-100">
+		<div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6 text-foreground">
 			<div className="flex items-center justify-between">
 				<Button
 					variant="ghost"
-					onClick={() => navigate(-1)}
-					className="text-sm gap-1 text-slate-600 dark:text-slate-400 h-8 px-2"
+					onClick={() => navigate('/positions')}
+					className="text-xs h-7 px-2 gap-1 text-muted-foreground hover:text-foreground"
 				>
 					<ChevronLeft className="h-4 w-4" />
 					{t('cvConstructor.backToPositions')}
@@ -127,7 +120,7 @@ export default function CvConstructor() {
 				{isRecruiter && (
 					<Badge
 						variant="outline"
-						className="text-xs text-amber-600 bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800 font-semibold gap-1"
+						className="text-[10px] text-amber-500 border-amber-500/30 gap-1"
 					>
 						<Lock className="h-3 w-3" />
 						{t('cvConstructor.readOnlyMode')}
@@ -135,52 +128,50 @@ export default function CvConstructor() {
 				)}
 			</div>
 
-			<div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
-				<div className="bg-slate-900 dark:bg-slate-950 text-white p-6">
-					<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-						<div>
-							<span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1">
-								<UserCheck className="h-3.5 w-3.5" />
-								{t('cvConstructor.candidateResume')}
-							</span>
-							<h1 className="text-2xl font-bold mt-1">
-								{candidateInfo?.firstName || clerkUser?.firstName || ''}{' '}
-								{candidateInfo?.lastName || clerkUser?.lastName || ''}
-							</h1>
-							<p className="text-sm text-slate-300 mt-1 flex items-center gap-1.5">
-								<Briefcase className="h-4 w-4 text-indigo-400" />
-								{cv?.position?.title || t('cvConstructor.desiredPosition')}
-							</p>
-						</div>
+			<div className="border rounded-lg bg-card overflow-hidden shadow-sm">
+				<div className="bg-muted/50 p-5 border-b flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+					<div>
+						<span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+							<UserCheck className="h-3 w-3" />
+							{t('cvConstructor.candidateResume')}
+						</span>
+						<h1 className="text-lg font-bold mt-0.5">
+							{candidateInfo?.firstName || clerkUser?.firstName || ''}{' '}
+							{candidateInfo?.lastName || clerkUser?.lastName || ''}
+						</h1>
+						<p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+							<Briefcase className="h-3.5 w-3.5" />
+							{cv?.position?.title || t('cvConstructor.desiredPosition')}
+						</p>
+					</div>
 
-						<div className="text-left md:text-right space-y-1 text-sm text-slate-300 border-t md:border-t-0 pt-3 md:pt-0 border-slate-800 w-full md:w-auto">
-							<p className="flex items-center md:justify-end gap-1.5">
-								<Mail className="h-3.5 w-3.5 text-indigo-400" />
-								<span className="text-white font-medium">
-									{candidateInfo?.email ||
-										clerkUser?.primaryEmailAddress?.emailAddress}
-								</span>
-							</p>
-							<p>
-								{t('cvConstructor.recruitmentStatus')}:{' '}
-								<Badge
-									variant="secondary"
-									className="bg-indigo-900/60 text-indigo-300 text-xs font-semibold ml-1"
-								>
-									{cv?.status || 'DRAFT'}
-								</Badge>
-							</p>
-						</div>
+					<div className="text-xs text-muted-foreground space-y-1">
+						<p className="flex items-center gap-1">
+							<Mail className="h-3 w-3" />
+							<span className="text-foreground font-medium">
+								{candidateInfo?.email ||
+									clerkUser?.primaryEmailAddress?.emailAddress}
+							</span>
+						</p>
+						<p>
+							{t('cvConstructor.recruitmentStatus')}:{' '}
+							<Badge
+								variant="secondary"
+								className="text-[10px] ml-1"
+							>
+								{cv?.status || 'DRAFT'}
+							</Badge>
+						</p>
 					</div>
 				</div>
 
-				<div className="p-6 space-y-6">
-					<section className="space-y-3">
-						<h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b dark:border-slate-800 pb-2">
+				<div className="p-5 space-y-5">
+					<section className="space-y-2">
+						<h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b pb-1.5">
 							{t('cvConstructor.characteristicsTitle')}
 						</h3>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
 							{attributes?.map(attr => {
 								const attrId = attr.attributeId || attr.id
 								const isEmpty = !attr.value
@@ -197,40 +188,40 @@ export default function CvConstructor() {
 								return (
 									<div
 										key={attrId}
-										className={`p-3.5 rounded-lg border transition-all flex flex-col justify-between ${
+										className={`p-3 rounded-md border text-xs flex flex-col justify-between ${
 											isEmpty
-												? 'border-red-200 bg-red-50/40 dark:bg-red-950/10 dark:border-red-900/40'
-												: 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20'
+												? 'border-destructive/40 bg-destructive/5'
+												: 'bg-background'
 										}`}
 									>
 										<div className="flex justify-between items-start gap-2">
-											<span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+											<span className="font-medium text-muted-foreground">
 												{attrName}
 											</span>
 											<Badge
 												variant="outline"
-												className="text-[10px] uppercase font-mono px-1.5 py-0"
+												className="text-[9px] uppercase font-mono px-1 py-0"
 											>
 												{attrType}
 											</Badge>
 										</div>
 
-										<div className="mt-2.5 flex items-center justify-between gap-2">
+										<div className="mt-2 flex items-center justify-between gap-2">
 											{isEditingThis ? (
-												<div className="flex items-center gap-1.5 w-full">
+												<div className="flex items-center gap-1 w-full">
 													<Input
 														value={editValue}
 														onChange={e => setEditValue(e.target.value)}
 														placeholder={t(
 															'cvConstructor.enterValuePlaceholder'
 														)}
-														className="h-8 text-sm"
+														className="h-7 text-xs"
 														autoFocus
 													/>
 													<Button
 														size="sm"
 														disabled={saveAttrMutation.isPending}
-														className="h-8 w-8 p-0 shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+														className="h-7 w-7 p-0 shrink-0"
 														onClick={() =>
 															saveAttrMutation.mutate({
 																attributeId: attrId,
@@ -238,16 +229,14 @@ export default function CvConstructor() {
 															})
 														}
 													>
-														<Check className="h-4 w-4" />
+														<Check className="h-3.5 w-3.5" />
 													</Button>
 												</div>
 											) : (
 												<>
 													<span
-														className={`text-sm font-semibold ${
-															isEmpty
-																? 'text-red-600 dark:text-red-400'
-																: 'text-slate-900 dark:text-slate-100'
+														className={`font-semibold ${
+															isEmpty ? 'text-destructive' : 'text-foreground'
 														}`}
 													>
 														{isEmpty
@@ -262,9 +251,9 @@ export default function CvConstructor() {
 																setEditingAttrId(attrId)
 																setEditValue(attr.value || '')
 															}}
-															className="h-7 w-7 p-0 text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+															className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
 														>
-															<Edit2 className="h-3.5 w-3.5" />
+															<Edit2 className="h-3 w-3" />
 														</Button>
 													)}
 												</>
@@ -276,14 +265,14 @@ export default function CvConstructor() {
 						</div>
 					</section>
 
-					<section className="space-y-3">
-						<div className="flex justify-between items-center border-b dark:border-slate-800 pb-2">
-							<h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+					<section className="space-y-2">
+						<div className="flex justify-between items-center border-b pb-1.5">
+							<h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
 								{t('cvConstructor.projectsTitle')}
 							</h3>
 							<Badge
 								variant="secondary"
-								className="text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800"
+								className="text-[10px]"
 							>
 								{t('cvConstructor.templateLimit', {
 									count: projects?.length || 0,
@@ -293,29 +282,29 @@ export default function CvConstructor() {
 						</div>
 
 						{!projects || projects.length === 0 ? (
-							<div className="text-center py-6 border border-dashed rounded-lg text-slate-400 text-sm space-y-1">
+							<div className="text-center py-5 border border-dashed rounded-md text-muted-foreground text-xs space-y-1">
 								<p>{t('cvConstructor.noProjects')}</p>
-								<p className="text-xs text-slate-500">
+								<p className="text-[11px]">
 									{t('cvConstructor.requiredTagsLabel')}:{' '}
-									<strong className="text-indigo-600 dark:text-indigo-400">
+									<strong className="text-foreground">
 										{cv?.position?.projectTags?.join(', ') ||
 											t('cvConstructor.noTags')}
 									</strong>
 								</p>
 							</div>
 						) : (
-							<div className="space-y-3">
+							<div className="space-y-2.5">
 								{projects.map(proj => (
 									<div
 										key={proj.id}
-										className="p-4 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900/50 space-y-2"
+										className="p-3.5 border rounded-md bg-background space-y-1.5 text-xs"
 									>
 										<div className="flex justify-between items-start gap-2">
-											<h4 className="font-semibold text-sm">
+											<h4 className="font-semibold">
 												{proj.title || proj.name}
 											</h4>
-											<div className="flex items-center gap-1 text-xs text-slate-400 shrink-0">
-												<Calendar className="h-3.5 w-3.5 text-indigo-500" />
+											<div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
+												<Calendar className="h-3 w-3" />
 												<span>
 													{formatDate(proj.startDate)} —{' '}
 													{formatDate(proj.endDate)}
@@ -323,7 +312,7 @@ export default function CvConstructor() {
 											</div>
 										</div>
 
-										<div className="text-sm text-slate-600 dark:text-slate-300 prose dark:prose-invert max-w-none">
+										<div className="text-muted-foreground prose dark:prose-invert max-w-none text-xs">
 											<ReactMarkdown>{proj.description || ''}</ReactMarkdown>
 										</div>
 
@@ -331,7 +320,7 @@ export default function CvConstructor() {
 											{proj.tags?.map(tag => (
 												<span
 													key={tag}
-													className="text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded"
+													className="text-[10px] font-mono bg-muted text-muted-foreground px-1.5 py-0.5 rounded"
 												>
 													{tag}
 												</span>
