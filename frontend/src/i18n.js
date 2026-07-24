@@ -68,8 +68,6 @@ const resources = {
 			},
 			attributeLibrary: {
 				title: 'Attribute Library',
-				subtitle:
-					'Global directory of qualification parameters, skills, and metrics used in CV templates.',
 				loading: 'Loading attribute library...',
 				errorTitle: 'System Alert',
 				fetchError: 'Failed to load attribute library from server.',
@@ -77,7 +75,7 @@ const resources = {
 				deleteError: 'Failed to delete attribute.',
 				confirmDelete: 'Are you sure you want to delete this attribute?',
 				btnAdd: 'Add Attribute',
-				searchPlaceholder: 'Search by name or key...',
+				searchPlaceholder: 'Search by name...',
 				filterAllTypes: 'All Types',
 				noData: 'No library attributes found matching your criteria.',
 				tableName: 'Name',
@@ -87,13 +85,13 @@ const resources = {
 				tableActions: 'Actions',
 				dialogCreateTitle: 'New Library Attribute',
 				dialogEditTitle: 'Edit Attribute',
-				dialogDescription: 'Configure global attribute specifications.',
 				labelName: 'Attribute Name',
-				labelKey: 'System Key',
 				labelType: 'Type',
-				labelDescription: 'Description',
 				btnCancel: 'Cancel',
-				btnSave: 'Save'
+				btnSave: 'Save',
+				selectedCount: 'Selected',
+				btnEditSelected: 'Edit',
+				btnDeleteSelected: 'Delete'
 			},
 			cvConstructor: {
 				loading: 'Assembling a professional resume...',
@@ -273,8 +271,6 @@ const resources = {
 			},
 			attributeLibrary: {
 				title: 'Библиотека атрибутов',
-				subtitle:
-					'Глобальный справочник квалификационных параметров, навыков и метрик шаблонов CV.',
 				loading: 'Загрузка библиотеки атрибутов...',
 				errorTitle: 'Системное уведомление',
 				fetchError: 'Не удалось загрузить библиотеку атрибутов с сервера.',
@@ -282,7 +278,7 @@ const resources = {
 				deleteError: 'Не удалось удалить атрибут.',
 				confirmDelete: 'Вы уверены, что хотите удалить этот атрибут?',
 				btnAdd: 'Добавить атрибут',
-				searchPlaceholder: 'Поиск по названию или ключу...',
+				searchPlaceholder: 'Поиск по названию...',
 				filterAllTypes: 'Все типы',
 				noData: 'Атрибуты библиотеки не найдены.',
 				tableName: 'Название',
@@ -292,13 +288,13 @@ const resources = {
 				tableActions: 'Действия',
 				dialogCreateTitle: 'Новый атрибут библиотеки',
 				dialogEditTitle: 'Редактирование атрибута',
-				dialogDescription: 'Настройте спецификацию глобального атрибута.',
 				labelName: 'Название атрибута',
-				labelKey: 'Системный ключ',
 				labelType: 'Тип',
-				labelDescription: 'Описание',
 				btnCancel: 'Отмена',
-				btnSave: 'Сохранить'
+				btnSave: 'Сохранить',
+				selectedCount: 'Выбрано',
+				btnEditSelected: 'Изменить',
+				btnDeleteSelected: 'Удалить'
 			},
 			cvConstructor: {
 				loading: 'Сборка профессионального резюме...',

@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle
@@ -247,8 +246,7 @@ export default function AttributeLibraryPage() {
 			{isAdmin && selectedIds.length > 0 && (
 				<div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
 					<span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-						{selectedIds.length}{' '}
-						{t('attributeLibrary.selectedCount') || 'selected'}
+						{selectedIds.length} {t('attributeLibrary.selectedCount')}
 					</span>
 					<div className="flex items-center gap-2">
 						{selectedIds.length === 1 && (
@@ -259,7 +257,7 @@ export default function AttributeLibraryPage() {
 								className="h-8 text-xs px-2.5 bg-white dark:bg-slate-900"
 							>
 								<Pencil className="h-3.5 w-3.5 mr-1.5" />
-								{t('attributeLibrary.btnEditSelected') || 'Edit'}
+								{t('attributeLibrary.btnEditSelected')}
 							</Button>
 						)}
 						<Button
@@ -269,7 +267,7 @@ export default function AttributeLibraryPage() {
 							className="h-8 text-xs px-2.5"
 						>
 							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
-							{t('attributeLibrary.btnDeleteSelected') || 'Delete Selected'}
+							{t('attributeLibrary.btnDeleteSelected')}
 						</Button>
 					</div>
 				</div>
@@ -363,9 +361,6 @@ export default function AttributeLibraryPage() {
 								? t('attributeLibrary.dialogEditTitle')
 								: t('attributeLibrary.dialogCreateTitle')}
 						</DialogTitle>
-						<DialogDescription className="text-sm text-slate-500">
-							{t('attributeLibrary.dialogDescription')}
-						</DialogDescription>
 					</DialogHeader>
 
 					<form
