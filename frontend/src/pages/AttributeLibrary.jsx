@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Edit2, Filter, Loader2, Plus, Search, Trash2 } from 'lucide-react'
+import { Filter, Loader2, Plus, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -114,20 +114,6 @@ export default function AttributeLibraryPage() {
 		onError: err => {
 			console.log(err)
 		}
-	})
-
-	const deleteMutation = useMutation({
-		mutationFn: async id => {
-			const token = await getToken()
-			await axios.delete(`/api/attributes/${id}`, {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['attributes'] })
-			setSelectedIds([])
-		},
-		onError: err => console.log(err)
 	})
 
 	const handleBulkDelete = async () => {
@@ -296,18 +282,13 @@ export default function AttributeLibraryPage() {
 							<TableHead className="text-sm">
 								{t('attributeLibrary.tableDescription')}
 							</TableHead>
-							{isAdmin && (
-								<TableHead className="text-sm text-right pr-4">
-									{t('attributeLibrary.tableActions')}
-								</TableHead>
-							)}
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{filteredAttributes.length === 0 ? (
 							<TableRow>
 								<TableCell
-									colSpan={isAdmin ? 5 : 3}
+									colSpan={isAdmin ? 4 : 3}
 									className="text-center py-8 text-sm text-slate-400"
 								>
 									{t('attributeLibrary.noData')}
@@ -319,10 +300,18 @@ export default function AttributeLibraryPage() {
 								return (
 									<TableRow
 										key={attr.id}
-										className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+										className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+										onClick={() => {
+											if (isAdmin) {
+												toggleSelectOne(attr.id)
+											}
+										}}
 									>
 										{isAdmin && (
-											<TableCell className="w-10 pl-4">
+											<TableCell
+												className="w-10 pl-4"
+												onClick={e => e.stopPropagation()}
+											>
 												<Checkbox
 													checked={isSelected}
 													onCheckedChange={() => toggleSelectOne(attr.id)}
@@ -340,31 +329,6 @@ export default function AttributeLibraryPage() {
 										<TableCell className="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
 											{attr.description || '—'}
 										</TableCell>
-										{isAdmin && (
-											<TableCell className="text-right pr-4">
-												<div className="flex justify-end gap-1">
-													<Button
-														variant="ghost"
-														size="sm"
-														onClick={() => handleOpenModal(attr)}
-														className="h-8 w-8 p-0"
-													>
-														<Edit2 className="h-4 w-4 text-slate-500" />
-													</Button>
-													<Button
-														variant="ghost"
-														size="sm"
-														onClick={() =>
-															confirm(t('attributeLibrary.confirmDelete')) &&
-															deleteMutation.mutate(attr.id)
-														}
-														className="h-8 w-8 p-0 hover:text-red-600"
-													>
-														<Trash2 className="h-4 w-4 text-slate-500" />
-													</Button>
-												</div>
-											</TableCell>
-										)}
 									</TableRow>
 								)
 							})
