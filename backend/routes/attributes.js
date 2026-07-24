@@ -4,6 +4,17 @@ import { requireAuth, requireRecruiterOrAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
+const TYPE_MAP = {
+	STRING: 'STRING',
+	TEXT: 'TEXT',
+	IMAGE: 'IMAGE',
+	NUMERIC: 'NUMERIC',
+	DATE: 'DATE',
+	PERIOD: 'PERIOD',
+	BOOLEAN: 'BOOLEAN',
+	ONE_OF_MANY: 'ONE_OF_MANY'
+}
+
 async function getAttributes(req, res) {
 	try {
 		const { q, category, type } = req.query
@@ -34,23 +45,10 @@ async function saveAttribute(req, res) {
 			return res.status(400).json({ error: 'Name is required' })
 		}
 
-		const typeMap = {
-			STRING: 'STRING',
-			TEXT: 'TEXT',
-			IMAGE: 'IMAGE',
-			NUMBER: 'NUMERIC',
-			NUMERIC: 'NUMERIC',
-			DATE: 'DATE',
-			PERIOD: 'PERIOD',
-			BOOLEAN: 'BOOLEAN',
-			SELECT: 'DROPDOWN',
-			DROPDOWN: 'DROPDOWN'
-		}
-
 		const data = {
 			name: name.trim(),
-			type: typeMap[type?.toUpperCase()] || 'TEXT',
-			category: category?.trim() || 'GENERAL',
+			type: TYPE_MAP[type?.toUpperCase()] || 'TEXT',
+			category: category?.trim() || 'CERTIFICATION',
 			...(options !== undefined && {
 				options: Array.isArray(options) ? options : []
 			})
@@ -64,10 +62,13 @@ async function saveAttribute(req, res) {
 			if (version !== undefined && existing.version !== version) {
 				return res.status(409).json({ error: 'Version conflict' })
 			}
+
 			const updated = await prisma.attributeLibrary.update({
 				where: { id },
-				data,
-				version: { increment: 1 }
+				data: {
+					...data,
+					version: { increment: 1 }
+				}
 			})
 			return res.json(updated)
 		}
@@ -83,10 +84,14 @@ async function saveAttribute(req, res) {
 async function deleteAttribute(req, res) {
 	try {
 		const { id } = req.params
-		if (prisma.attributeUsage) {
-			await prisma.attributeUsage.deleteMany({ where: { attributeId: id } })
-		}
-		await prisma.attributeLibrary.delete({ where: { id } })
+
+		await prisma.$transaction(async tx => {
+			if (tx.attributeUsage) {
+				await tx.attributeUsage.deleteMany({ where: { attributeId: id } })
+			}
+			await tx.attributeLibrary.delete({ where: { id } })
+		})
+
 		res.json({ success: true })
 	} catch (err) {
 		console.error(err)

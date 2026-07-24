@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
 	Dialog,
 	DialogContent,
@@ -31,8 +32,30 @@ import {
 	TableRow
 } from '@/components/ui/table'
 
-const ATTRIBUTE_TYPES = ['TEXT', 'NUMERIC', 'BOOLEAN', 'SELECT']
-const CATEGORIES = ['GENERAL', 'SKILLS', 'LANGUAGES', 'EXPERIENCE']
+const ATTRIBUTE_TYPES = [
+	'STRING',
+	'TEXT',
+	'IMAGE',
+	'NUMERIC',
+	'DATE',
+	'PERIOD',
+	'BOOLEAN',
+	'ONE_OF_MANY'
+]
+
+const CATEGORIES = [
+	'CERTIFICATION',
+	'DOMAIN_KNOWLEDGE',
+	'PERSONAL_INFORMATION',
+	'SOFT_SKILLS'
+]
+
+const INITIAL_FORM_DATA = {
+	name: '',
+	type: 'STRING',
+	category: 'CERTIFICATION',
+	description: ''
+}
 
 export default function AttributeLibraryPage() {
 	const { t } = useTranslation()
@@ -43,13 +66,8 @@ export default function AttributeLibraryPage() {
 	const [selectedType, setSelectedType] = useState('ALL')
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [editingAttribute, setEditingAttribute] = useState(null)
-	const [formData, setFormData] = useState({
-		name: '',
-		key: '',
-		type: 'TEXT',
-		category: 'GENERAL',
-		description: ''
-	})
+	const [selectedIds, setSelectedIds] = useState([])
+	const [formData, setFormData] = useState(INITIAL_FORM_DATA)
 
 	const { data: profileData } = useQuery({
 		queryKey: ['profile'],
@@ -66,11 +84,7 @@ export default function AttributeLibraryPage() {
 	const role = profileData?.user?.role || 'CANDIDATE'
 	const isAdmin = role === 'ADMINISTRATOR' || role === 'RECRUITER'
 
-	const {
-		data: attributes = [],
-		isLoading,
-		error
-	} = useQuery({
+	const { data: attributes = [], isLoading } = useQuery({
 		queryKey: ['attributes'],
 		queryFn: async () => {
 			const token = await getToken()
@@ -98,11 +112,7 @@ export default function AttributeLibraryPage() {
 			setIsModalOpen(false)
 		},
 		onError: err => {
-			alert(
-				err.response?.data?.error ||
-					err.message ||
-					t('attributeLibrary.saveError')
-			)
+			console.log(err)
 		}
 	})
 
@@ -113,45 +123,68 @@ export default function AttributeLibraryPage() {
 				headers: { Authorization: `Bearer ${token}` }
 			})
 		},
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: ['attributes'] }),
-		onError: err =>
-			alert(
-				err.response?.data?.error ||
-					err.message ||
-					t('attributeLibrary.deleteError')
-			)
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['attributes'] })
+			setSelectedIds([])
+		},
+		onError: err => console.log(err)
 	})
+
+	const handleBulkDelete = async () => {
+		if (
+			!confirm(
+				t('attributeLibrary.confirmDeleteBulk') || 'Delete selected items?'
+			)
+		)
+			return
+		try {
+			const token = await getToken()
+			await Promise.all(
+				selectedIds.map(id =>
+					axios.delete(`/api/attributes/${id}`, {
+						headers: { Authorization: `Bearer ${token}` }
+					})
+				)
+			)
+			queryClient.invalidateQueries({ queryKey: ['attributes'] })
+			setSelectedIds([])
+		} catch (err) {
+			console.log(err)
+		}
+	}
 
 	const handleOpenModal = (attr = null) => {
 		setEditingAttribute(attr)
-		setFormData(
-			attr
-				? {
-						name: attr.name || '',
-						key: attr.key || '',
-						type: attr.type || 'TEXT',
-						category: attr.category || 'GENERAL',
-						description: attr.description || ''
-				  }
-				: {
-						name: '',
-						key: '',
-						type: 'TEXT',
-						category: 'GENERAL',
-						description: ''
-				  }
-		)
+		setFormData({
+			name: attr?.name ?? INITIAL_FORM_DATA.name,
+			type: attr?.type ?? INITIAL_FORM_DATA.type,
+			category: attr?.category ?? INITIAL_FORM_DATA.category,
+			description: attr?.description ?? INITIAL_FORM_DATA.description
+		})
 		setIsModalOpen(true)
 	}
 
 	const filteredAttributes = attributes.filter(attr => {
-		const matchesSearch =
-			attr.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			attr.key?.toLowerCase().includes(searchQuery.toLowerCase())
+		const matchesSearch = attr.name
+			?.toLowerCase()
+			.includes(searchQuery.toLowerCase())
 		const matchesType = selectedType === 'ALL' || attr.type === selectedType
 		return matchesSearch && matchesType
 	})
+
+	const toggleSelectAll = () => {
+		if (selectedIds.length === filteredAttributes.length) {
+			setSelectedIds([])
+		} else {
+			setSelectedIds(filteredAttributes.map(a => a.id))
+		}
+	}
+
+	const toggleSelectOne = id => {
+		setSelectedIds(prev =>
+			prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+		)
+	}
 
 	if (isLoading || !isLoaded) {
 		return (
@@ -219,15 +252,43 @@ export default function AttributeLibraryPage() {
 				</div>
 			</div>
 
+			{isAdmin && selectedIds.length > 0 && (
+				<div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
+					<span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+						{selectedIds.length}{' '}
+						{t('attributeLibrary.selectedCount') || 'selected'}
+					</span>
+					<div className="flex items-center gap-2">
+						<Button
+							variant="destructive"
+							size="sm"
+							onClick={handleBulkDelete}
+							className="h-8 text-xs px-2.5"
+						>
+							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
+							{t('attributeLibrary.btnDeleteSelected') || 'Delete Selected'}
+						</Button>
+					</div>
+				</div>
+			)}
+
 			<div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
 				<Table>
 					<TableHeader className="bg-slate-50 dark:bg-slate-950">
 						<TableRow>
+							{isAdmin && (
+								<TableHead className="w-10 pl-4">
+									<Checkbox
+										checked={
+											filteredAttributes.length > 0 &&
+											selectedIds.length === filteredAttributes.length
+										}
+										onCheckedChange={toggleSelectAll}
+									/>
+								</TableHead>
+							)}
 							<TableHead className="text-sm">
 								{t('attributeLibrary.tableName')}
-							</TableHead>
-							<TableHead className="text-sm">
-								{t('attributeLibrary.tableKey')}
 							</TableHead>
 							<TableHead className="text-sm">
 								{t('attributeLibrary.tableType')}
@@ -236,7 +297,7 @@ export default function AttributeLibraryPage() {
 								{t('attributeLibrary.tableDescription')}
 							</TableHead>
 							{isAdmin && (
-								<TableHead className="text-sm text-right">
+								<TableHead className="text-sm text-right pr-4">
 									{t('attributeLibrary.tableActions')}
 								</TableHead>
 							)}
@@ -246,59 +307,67 @@ export default function AttributeLibraryPage() {
 						{filteredAttributes.length === 0 ? (
 							<TableRow>
 								<TableCell
-									colSpan={isAdmin ? 5 : 4}
+									colSpan={isAdmin ? 5 : 3}
 									className="text-center py-8 text-sm text-slate-400"
 								>
 									{t('attributeLibrary.noData')}
 								</TableCell>
 							</TableRow>
 						) : (
-							filteredAttributes.map(attr => (
-								<TableRow
-									key={attr.id}
-									className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-								>
-									<TableCell className="font-medium text-sm">
-										{attr.name}
-									</TableCell>
-									<TableCell className="font-mono text-xs text-slate-500 dark:text-slate-400">
-										{attr.key}
-									</TableCell>
-									<TableCell>
-										<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
-											{attr.type}
-										</span>
-									</TableCell>
-									<TableCell className="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
-										{attr.description || '—'}
-									</TableCell>
-									{isAdmin && (
-										<TableCell className="text-right">
-											<div className="flex justify-end gap-1">
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() => handleOpenModal(attr)}
-													className="h-8 w-8 p-0"
-												>
-													<Edit2 className="h-4 w-4 text-slate-500" />
-												</Button>
-												<Button
-													variant="ghost"
-													size="sm"
-													onClick={() =>
-														confirm(t('attributeLibrary.confirmDelete')) &&
-														deleteMutation.mutate(attr.id)
-													}
-													className="h-8 w-8 p-0 hover:text-red-600"
-												>
-													<Trash2 className="h-4 w-4 text-slate-500" />
-												</Button>
-											</div>
+							filteredAttributes.map(attr => {
+								const isSelected = selectedIds.includes(attr.id)
+								return (
+									<TableRow
+										key={attr.id}
+										className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+									>
+										{isAdmin && (
+											<TableCell className="w-10 pl-4">
+												<Checkbox
+													checked={isSelected}
+													onCheckedChange={() => toggleSelectOne(attr.id)}
+												/>
+											</TableCell>
+										)}
+										<TableCell className="font-medium text-sm">
+											{attr.name}
 										</TableCell>
-									)}
-								</TableRow>
-							))
+										<TableCell>
+											<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
+												{attr.type}
+											</span>
+										</TableCell>
+										<TableCell className="text-sm text-slate-600 dark:text-slate-400 max-w-xs truncate">
+											{attr.description || '—'}
+										</TableCell>
+										{isAdmin && (
+											<TableCell className="text-right pr-4">
+												<div className="flex justify-end gap-1">
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={() => handleOpenModal(attr)}
+														className="h-8 w-8 p-0"
+													>
+														<Edit2 className="h-4 w-4 text-slate-500" />
+													</Button>
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={() =>
+															confirm(t('attributeLibrary.confirmDelete')) &&
+															deleteMutation.mutate(attr.id)
+														}
+														className="h-8 w-8 p-0 hover:text-red-600"
+													>
+														<Trash2 className="h-4 w-4 text-slate-500" />
+													</Button>
+												</div>
+											</TableCell>
+										)}
+									</TableRow>
+								)
+							})
 						)}
 					</TableBody>
 				</Table>
@@ -339,21 +408,6 @@ export default function AttributeLibraryPage() {
 								}
 								placeholder="e.g. English Level"
 								className="text-sm h-9"
-							/>
-						</div>
-
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelKey')} *
-							</label>
-							<Input
-								required
-								value={formData.key}
-								onChange={e =>
-									setFormData(p => ({ ...p, key: e.target.value }))
-								}
-								placeholder="e.g. english_level"
-								className="text-sm font-mono h-9"
 							/>
 						</div>
 
