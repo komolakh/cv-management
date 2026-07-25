@@ -1,75 +1,119 @@
-import { Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import * as z from 'zod'
 
 import { AttributeLibrarySelector } from '@/components/AttributeSelector'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+
+const positionSchema = z.object({
+	title: z.string().min(1, 'Title is required'),
+	description: z.string().min(1, 'Description is required'),
+	selectedAttributeIds: z.array(z.string()).default([]),
+	maxProjects: z.coerce.number().min(1).max(10).default(1),
+	tagsInput: z.string().optional()
+})
 
 export function PositionsDialog({
 	isOpen,
 	onOpenChange,
 	editingPosition,
 	handleCloseModal,
-	form,
-	onSubmit,
 	createMutation,
-	updateMutation
+	updateMutation,
+	onSubmit
 }) {
 	const { t } = useTranslation()
-	const { register, handleSubmit, control } = form
+
+	const {
+		register,
+		handleSubmit,
+		control,
+		reset,
+		formState: { errors }
+	} = useForm({
+		resolver: zodResolver(positionSchema),
+		defaultValues: {
+			title: '',
+			description: '',
+			selectedAttributeIds: [],
+			maxProjects: 1,
+			tagsInput: ''
+		}
+	})
+
+	useEffect(() => {
+		if (editingPosition) {
+			reset({
+				title: editingPosition.title ?? '',
+				description: editingPosition.description ?? '',
+				selectedAttributeIds: editingPosition.selectedAttributeIds ?? [],
+				maxProjects: editingPosition.maxProjects ?? 1,
+				tagsInput: editingPosition.tagsInput ?? ''
+			})
+		} else {
+			reset({
+				title: '',
+				description: '',
+				selectedAttributeIds: [],
+				maxProjects: 1,
+				tagsInput: ''
+			})
+		}
+	}, [editingPosition, isOpen, reset])
+
+	const isPending = createMutation?.isPending || updateMutation?.isPending
 
 	return (
 		<Dialog
 			open={isOpen}
 			onOpenChange={onOpenChange}
 		>
-			<DialogContent className="sm:max-w-[520px]">
+			<DialogContent>
 				<DialogHeader>
-					<DialogTitle className="text-base font-semibold">
+					<DialogTitle>
 						{editingPosition
-							? 'Редактировать позицию'
-							: t('positionsPage.dialog.title')}
+							? t('positionsPage.dialog.editTitle')
+							: t('positionsPage.dialog.createTitle')}
 					</DialogTitle>
-					<DialogDescription className="text-sm text-slate-500">
-						{t('positionsPage.dialog.description')}
-					</DialogDescription>
 				</DialogHeader>
 
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="space-y-4 py-2"
+					className="space-y-4"
 				>
 					<div className="space-y-1.5">
-						<label className="text-xs font-semibold uppercase text-slate-500">
-							{t('positionsPage.dialog.fieldName')} *
-						</label>
+						<Label>{t('positionsPage.dialog.fieldName')}</Label>
 						<Input
-							required
 							placeholder={t('positionsPage.dialog.fieldNamePlaceholder')}
 							{...register('title')}
-							className="text-sm h-9"
 						/>
+						{errors.title && (
+							<p className="text-destructive">{errors.title.message}</p>
+						)}
 					</div>
 
 					<div className="space-y-1.5">
-						<label className="text-xs font-semibold uppercase text-slate-500">
-							{t('positionsPage.dialog.fieldDesc')} *
-						</label>
+						<Label>{t('positionsPage.dialog.fieldDesc')}</Label>
 						<Textarea
-							required
 							placeholder={t('positionsPage.dialog.fieldDescPlaceholder')}
-							{...register('shortDescription')}
-							className="text-sm min-h-[80px]"
+							{...register('description')}
 						/>
+						{errors.description && (
+							<p className="text-destructive">{errors.description.message}</p>
+						)}
 					</div>
 
 					<Controller
@@ -83,48 +127,36 @@ export function PositionsDialog({
 						)}
 					/>
 
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('positionsPage.dialog.fieldMaxProjects')}
-							</label>
-							<Input
-								type="number"
-								min="1"
-								max="10"
-								{...register('maxProjects')}
-								className="text-sm h-9"
-							/>
-						</div>
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('positionsPage.dialog.fieldTags')}
-							</label>
-							<Input
-								placeholder={t('positionsPage.dialog.fieldTagsPlaceholder')}
-								{...register('tagsInput')}
-								className="text-sm h-9"
-							/>
-						</div>
+					<div className="space-y-1.5">
+						<Label>{t('positionsPage.dialog.fieldMaxProjects')}</Label>
+						<Input
+							type="number"
+							className="text-sm h-9"
+							{...register('maxProjects')}
+						/>
+					</div>
+					<div className="space-y-1.5">
+						<Label>{t('positionsPage.dialog.fieldTags')}</Label>
+						<Input
+							placeholder={t('positionsPage.dialog.fieldTagsPlaceholder')}
+							{...register('tagsInput')}
+						/>
 					</div>
 
-					<DialogFooter className="pt-2">
+					<DialogFooter>
 						<Button
 							type="button"
 							variant="ghost"
 							onClick={handleCloseModal}
-							className="text-sm h-9"
 						>
 							{t('positionsPage.dialog.btnCancel')}
 						</Button>
 						<Button
 							type="submit"
-							disabled={createMutation.isPending || updateMutation.isPending}
-							className="text-sm h-9"
+							disabled={isPending}
 						>
-							{editingPosition
-								? 'Сохранить'
-								: t('positionsPage.dialog.btnSubmit')}
+							{isPending && <Loader2 />}
+							{t('positionsPage.dialog.btnSubmit')}
 						</Button>
 					</DialogFooter>
 				</form>

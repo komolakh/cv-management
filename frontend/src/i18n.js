@@ -135,8 +135,8 @@ const resources = {
 					empty: 'No attributes found'
 				},
 				dialog: {
-					title: 'New Position',
-					description: 'Fill in the details to create a new position.',
+					editTitle: 'Edit Position',
+					createTitle: 'New Position',
 					fieldName: 'Title',
 					fieldNamePlaceholder: 'e.g. Frontend Developer',
 					fieldDesc: 'Description',
@@ -346,8 +346,8 @@ const resources = {
 					empty: 'Атрибуты не найдены'
 				},
 				dialog: {
-					title: 'Новая позиция',
-					description: 'Заполните данные для создания новой позиции.',
+					editTitle: 'Изменить позицию',
+					createTitle: 'Новая позиция',
 					fieldName: 'Название',
 					fieldNamePlaceholder: 'Например: Frontend Developer',
 					fieldDesc: 'Описание',

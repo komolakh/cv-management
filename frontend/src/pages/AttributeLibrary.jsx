@@ -36,12 +36,6 @@ const CATEGORIES = [
 	'SOFT_SKILLS'
 ]
 
-const INITIAL_FORM_DATA = {
-	name: '',
-	type: 'STRING',
-	category: 'CERTIFICATION'
-}
-
 export default function AttributeLibraryPage() {
 	const { t } = useTranslation()
 	const { getToken, isLoaded, isSignedIn } = useAuth()
@@ -53,7 +47,6 @@ export default function AttributeLibraryPage() {
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [editingAttribute, setEditingAttribute] = useState(null)
 	const [selectedIds, setSelectedIds] = useState([])
-	const [formData, setFormData] = useState(INITIAL_FORM_DATA)
 
 	const { data: attributes = [], isLoading: isAttributesLoading } = useQuery({
 		queryKey: ['attributes'],
@@ -112,11 +105,6 @@ export default function AttributeLibraryPage() {
 
 	const handleOpenModal = (attr = null) => {
 		setEditingAttribute(attr)
-		setFormData({
-			name: attr?.name ?? INITIAL_FORM_DATA.name,
-			type: attr?.type ?? INITIAL_FORM_DATA.type,
-			category: attr?.category ?? INITIAL_FORM_DATA.category
-		})
 		setIsModalOpen(true)
 	}
 
@@ -231,8 +219,6 @@ export default function AttributeLibraryPage() {
 				setIsModalOpen={setIsModalOpen}
 				editingAttribute={editingAttribute}
 				isRecruiter={isRecruiter}
-				formData={formData}
-				setFormData={setFormData}
 				categories={CATEGORIES}
 				attributeTypes={ATTRIBUTE_TYPES}
 				saveMutation={saveMutation}
