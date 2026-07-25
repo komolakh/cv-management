@@ -22,15 +22,17 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import { useUserRole } from '@/hooks/useUserRole'
 
 export default function AdminPanel() {
 	const { t } = useTranslation()
 	const { getToken, isLoaded, isSignedIn } = useAuth()
+	const { isAdmin, isLoading: isRoleLoading } = useUserRole()
 	const queryClient = useQueryClient()
 
 	const {
 		data: users = [],
-		isLoading,
+		isLoading: isUsersLoading,
 		error
 	} = useQuery({
 		queryKey: ['adminUsers'],
@@ -41,7 +43,7 @@ export default function AdminPanel() {
 			})
 			return res.data.users || res.data || []
 		},
-		enabled: isLoaded && isSignedIn
+		enabled: isLoaded && isSignedIn && isAdmin
 	})
 
 	const roleMutation = useMutation({
@@ -80,13 +82,30 @@ export default function AdminPanel() {
 		}
 	}
 
-	if (isLoading) {
+	if (isRoleLoading || isUsersLoading) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
 				<Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
 				<p className="text-sm font-medium text-slate-500 dark:text-slate-400">
 					{t('admin.loading')}
 				</p>
+			</div>
+		)
+	}
+
+	if (!isAdmin) {
+		return (
+			<div className="max-w-xl mx-auto mt-8 p-4">
+				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
+					<AlertTitle>{t('admin.errorTitle', 'Ошибка')}</AlertTitle>
+					<AlertDescription className="text-sm">
+						{t(
+							'admin.forbidden',
+							'Недостаточно прав для просмотра этой страницы'
+						)}
+					</AlertDescription>
+				</Alert>
 			</div>
 		)
 	}

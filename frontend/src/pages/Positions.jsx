@@ -36,6 +36,7 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
+import { useUserRole } from '@/hooks/useUserRole'
 
 function AttributeLibrarySelector({ selectedIds, onChange }) {
 	const { getToken, isLoaded, isSignedIn } = useAuth()
@@ -127,6 +128,7 @@ function AttributeLibrarySelector({ selectedIds, onChange }) {
 export default function PositionsPage() {
 	const { getToken, isLoaded, isSignedIn } = useAuth()
 	const { isLoaded: isClerkLoaded } = useUser()
+	const { isRecruiter, isAdmin, isLoading: isRoleLoading } = useUserRole()
 	const { t } = useTranslation()
 	const queryClient = useQueryClient()
 
@@ -144,20 +146,7 @@ export default function PositionsPage() {
 		}
 	})
 
-	const { data: dbUser, isLoading: isUserLoading } = useQuery({
-		queryKey: ['currentUser'],
-		queryFn: async () => {
-			const token = await getToken()
-			const res = await axios.get('/api/users/me', {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-			return res.data?.user || null
-		},
-		enabled: isLoaded && isSignedIn
-	})
-
-	const isRecruiterOrAdmin =
-		dbUser?.role === 'RECRUITER' || dbUser?.role === 'ADMINISTRATOR'
+	const isRecruiterOrAdmin = isRecruiter || isAdmin
 
 	const { data: positions = [], isLoading: isPositionsLoading } = useQuery({
 		queryKey: ['positions', search],
@@ -258,7 +247,7 @@ export default function PositionsPage() {
 		})
 	}
 
-	if (!isClerkLoaded || isUserLoading) {
+	if (!isClerkLoaded || isRoleLoading) {
 		return (
 			<div className="flex h-48 items-center justify-center text-sm text-slate-400">
 				{t('positionsPage.loading')}

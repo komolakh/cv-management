@@ -8,32 +8,17 @@ router.use(requireAuth)
 
 router.get('/me', async (req, res) => {
 	try {
-		const userId = req.userId || req.auth?.userId
-
-		const user = await prisma.user.upsert({
-			where: { id: userId },
-			update: {},
-			create: {
-				id: userId,
-				email: 'sync-pending@test.com',
-				firstName: 'New',
-				lastName: 'User',
-				role: 'CANDIDATE',
-				version: 1
-			},
+		const id = req.auth?.userId
+		const user = await prisma.user.findUnique({
+			where: { id },
 			include: {
-				profileAttributeValues: {
-					include: {
-						attributeLibrary: true
-					}
-				}
+				profileAttributeValues: { include: { attributeLibrary: true } }
 			}
 		})
-
-		return res.json({ user })
+		res.json({ user })
 	} catch (err) {
 		console.error(err)
-		return res.status(500).json({ error: err.message, stack: err.stack })
+		res.status(500).json({ error: err.message, stack: err.stack })
 	}
 })
 
@@ -43,7 +28,7 @@ router.put('/profile/attribute', async (req, res) => {
 
 	try {
 		const model = prisma.attributeValue || prisma.profileAttributeValue
-		const userId = req.userId || req.auth?.userId
+		const userId = req.auth?.userId
 
 		if (currentVersion === undefined) {
 			const updated = await model.update({
@@ -53,7 +38,6 @@ router.put('/profile/attribute', async (req, res) => {
 			return res.json({ success: true, updated })
 		}
 
-		const parsedVersion = parseInt(currentVersion, 10)
 		const { count } = await model.updateMany({
 			where: { id: valueId, userId },
 			data: { value: String(newValue || '') }
@@ -93,7 +77,7 @@ router.put('/:id/role', requireAdmin, async (req, res) => {
 	const { id } = req.params
 	const { newRole } = req.body
 	const validRoles = ['CANDIDATE', 'RECRUITER', 'ADMINISTRATOR']
-	const currentUserId = req.userId || req.auth?.userId
+	const currentUserId = req.auth?.userId
 
 	if (!validRoles.includes(newRole))
 		return res.status(400).json({ error: 'Invalid role.' })

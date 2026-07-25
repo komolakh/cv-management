@@ -2,8 +2,7 @@ import { useAuth, useUser } from '@clerk/clerk-react'
 import {
 	QueryClient,
 	QueryClientProvider,
-	useMutation,
-	useQuery
+	useMutation
 } from '@tanstack/react-query'
 import axios from 'axios'
 import { useEffect } from 'react'
@@ -11,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 
 import { Header } from './components/Header'
+import { useUserRole } from './hooks/useUserRole'
 import AdminPanel from './pages/AdminPanel'
 import AttributeLibraryPage from './pages/AttributeLibrary'
 import CvConstructor from './pages/CvConstructor'
@@ -72,28 +72,7 @@ function AuthAndSyncHandler() {
 }
 
 function MainLayout() {
-	const { getToken, isLoaded, isSignedIn } = useAuth()
-
-	const { data: dbUser } = useQuery({
-		queryKey: ['currentUser'],
-		queryFn: async () => {
-			const token = await getToken()
-			if (!token) return null
-
-			const res = await axios.get('/api/users/me', {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-			return res.data?.user || null
-		},
-		enabled: isLoaded && isSignedIn,
-		retry: 3,
-		retryDelay: 1000,
-		staleTime: 1000 * 60 * 5
-	})
-
-	const role = dbUser?.role
-	const isAdmin = role === 'ADMINISTRATOR'
-	const isStaff = isAdmin || role === 'RECRUITER'
+	const { isStaff, isAdmin } = useUserRole()
 
 	return (
 		<Router>

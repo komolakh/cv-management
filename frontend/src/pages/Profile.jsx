@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useUserRole } from '@/hooks/useUserRole'
 
 const profileSchema = z.object({
 	firstName: z.string().default(''),
@@ -50,7 +51,8 @@ const SectionHeader = ({ title }) => (
 
 export default function ProfilePage() {
 	const { isLoaded, isSignedIn } = useAuth()
-	const { user: clerkUser } = useUser()
+	const { user: clerkUser, isLoaded: isClerkLoaded } = useUser()
+	const { isRecruiter, isAdmin, isLoading: isRoleLoading } = useUserRole()
 	const { t } = useTranslation()
 	const queryClient = useQueryClient()
 
@@ -71,7 +73,7 @@ export default function ProfilePage() {
 		enabled: isLoaded && isSignedIn
 	})
 
-	const isReadOnly = profileData?.user?.role === 'RECRUITER'
+	const isReadOnly = isRecruiter && !isAdmin
 
 	const { register, control, reset } = useForm({
 		resolver: zodResolver(profileSchema),
@@ -162,7 +164,7 @@ export default function ProfilePage() {
 		onSuccess: () => queryClient.invalidateQueries(['profile'])
 	})
 
-	if (!isLoaded || isLoading) {
+	if (!isClerkLoaded || isRoleLoading || isLoading) {
 		return (
 			<div className="flex h-48 items-center justify-center text-xs text-slate-400">
 				{t('profile.loading')}

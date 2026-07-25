@@ -2,12 +2,12 @@ import { useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import {
-	AlertCircle,
 	Briefcase,
 	Calendar,
 	Check,
 	ChevronLeft,
 	Edit2,
+	Loader2,
 	Lock,
 	Mail,
 	UserCheck
@@ -20,6 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useUserRole } from '@/hooks/useUserRole'
 
 export default function CvConstructor() {
 	const { positionId } = useParams()
@@ -32,9 +33,7 @@ export default function CvConstructor() {
 	const [editingAttrId, setEditingAttrId] = useState(null)
 	const [editValue, setEditValue] = useState('')
 
-	const userRole = clerkUser?.publicMetadata?.role || 'CANDIDATE'
-	const isRecruiter = userRole === 'RECRUITER'
-	const canEdit = userRole === 'CANDIDATE' || userRole === 'ADMINISTRATOR'
+	const { dbUser, isRecruiter, canEdit } = useUserRole()
 
 	const { data, isLoading } = useQuery({
 		queryKey: ['cvConstructor', positionId],
@@ -80,30 +79,20 @@ export default function CvConstructor() {
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center items-center min-h-[50vh]">
-				<div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+			<div className="flex h-48 items-center justify-center text-sm text-slate-400">
+				<Loader2 className="h-5 w-5 animate-spin mr-2" />
+				{t('attributeLibrary.loading')}
 			</div>
 		)
 	}
 
-	if (!data) {
-		return (
-			<div className="max-w-md mx-auto mt-12 p-6 border rounded-lg bg-background text-center space-y-3">
-				<p className="text-destructive font-medium flex items-center justify-center gap-1.5 text-sm">
-					<AlertCircle className="h-4 w-4" /> {t('cvConstructor.errorTitle')}
-				</p>
-				<Button
-					variant="outline"
-					onClick={() => navigate('/positions')}
-					className="w-full h-8 text-xs"
-				>
-					{t('cvConstructor.backToPositions')}
-				</Button>
-			</div>
-		)
-	}
-
-	const { cv, attributes, projects, maxProjects, candidateInfo } = data
+	const {
+		cv = {},
+		attributes = [],
+		projects = [],
+		maxProjects = 3,
+		candidateInfo = {}
+	} = data || {}
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-4 p-4 md:p-6 text-foreground">
@@ -136,8 +125,14 @@ export default function CvConstructor() {
 							{t('cvConstructor.candidateResume')}
 						</span>
 						<h1 className="text-lg font-bold mt-0.5">
-							{candidateInfo?.firstName || clerkUser?.firstName || ''}{' '}
-							{candidateInfo?.lastName || clerkUser?.lastName || ''}
+							{candidateInfo?.firstName ||
+								dbUser?.firstName ||
+								clerkUser?.firstName ||
+								''}{' '}
+							{candidateInfo?.lastName ||
+								dbUser?.lastName ||
+								clerkUser?.lastName ||
+								''}
 						</h1>
 						<p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
 							<Briefcase className="h-3.5 w-3.5" />
@@ -150,6 +145,7 @@ export default function CvConstructor() {
 							<Mail className="h-3 w-3" />
 							<span className="text-foreground font-medium">
 								{candidateInfo?.email ||
+									dbUser?.email ||
 									clerkUser?.primaryEmailAddress?.emailAddress}
 							</span>
 						</p>
@@ -276,7 +272,7 @@ export default function CvConstructor() {
 							>
 								{t('cvConstructor.templateLimit', {
 									count: projects?.length || 0,
-									max: maxProjects || 3
+									max: maxProjects
 								})}
 							</Badge>
 						</div>

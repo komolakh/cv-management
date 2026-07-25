@@ -30,6 +30,7 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import { useUserRole } from '@/hooks/useUserRole'
 
 const ATTRIBUTE_TYPES = [
 	'STRING',
@@ -58,6 +59,7 @@ const INITIAL_FORM_DATA = {
 export default function AttributeLibraryPage() {
 	const { t } = useTranslation()
 	const { getToken, isLoaded, isSignedIn } = useAuth()
+	const { isAdmin, isLoading: isRoleLoading } = useUserRole()
 	const queryClient = useQueryClient()
 
 	const [searchQuery, setSearchQuery] = useState('')
@@ -67,22 +69,7 @@ export default function AttributeLibraryPage() {
 	const [selectedIds, setSelectedIds] = useState([])
 	const [formData, setFormData] = useState(INITIAL_FORM_DATA)
 
-	const { data: profileData } = useQuery({
-		queryKey: ['profile'],
-		queryFn: async () => {
-			const token = await getToken()
-			const res = await axios.get('/api/profile', {
-				headers: { Authorization: `Bearer ${token}` }
-			})
-			return res.data
-		},
-		enabled: isLoaded && isSignedIn
-	})
-
-	const role = profileData?.user?.role || 'CANDIDATE'
-	const isAdmin = role === 'ADMINISTRATOR' || role === 'RECRUITER'
-
-	const { data: attributes = [], isLoading } = useQuery({
+	const { data: attributes = [], isLoading: isAttributesLoading } = useQuery({
 		queryKey: ['attributes'],
 		queryFn: async () => {
 			const token = await getToken()
@@ -177,7 +164,7 @@ export default function AttributeLibraryPage() {
 		)
 	}
 
-	if (isLoading || !isLoaded) {
+	if (isRoleLoading || isAttributesLoading || !isLoaded) {
 		return (
 			<div className="flex h-48 items-center justify-center text-sm text-slate-400">
 				<Loader2 className="h-5 w-5 animate-spin mr-2" />
