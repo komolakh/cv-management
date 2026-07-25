@@ -168,6 +168,56 @@ router.post('/', requireAuth, requireRecruiterOrAdmin, async (req, res) => {
 	}
 })
 
+router.put('/:id', requireAuth, requireRecruiterOrAdmin, async (req, res) => {
+	try {
+		const { id } = req.params
+		const {
+			title,
+			shortDescription,
+			description,
+			accessRules,
+			projectTags,
+			attributeIds
+		} = req.body
+
+		if (!title?.trim()) return res.status(400).json({ error: 'Title required' })
+
+		const existing = await prisma.position.findUnique({ where: { id } })
+		if (!existing) return res.status(404).json({ error: 'Not found' })
+
+		const updatedPosition = await prisma.$transaction(async tx => {
+			await tx.positionTemplateAttributes.deleteMany({
+				where: { positionId: id }
+			})
+
+			return tx.position.update({
+				where: { id },
+				data: {
+					title: title.trim(),
+					description: description || shortDescription || title.trim(),
+					...(accessRules && { accessRules }),
+					...(projectTags && {
+						projectTags: Array.isArray(projectTags) ? projectTags : []
+					}),
+					positionTemplateAttributes: {
+						create: (attributeIds || []).map(attributeId => ({ attributeId }))
+					}
+				},
+				include: {
+					positionTemplateAttributes: {
+						include: { attributeLibrary: true }
+					}
+				}
+			})
+		})
+
+		res.json(formatPos(updatedPosition))
+	} catch (err) {
+		console.error(err)
+		res.status(500).json({ error: err.message })
+	}
+})
+
 router.post(
 	'/:id/duplicate',
 	requireAuth,

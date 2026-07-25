@@ -1,20 +1,12 @@
 import { useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import {
-	Check,
-	Copy,
-	Globe,
-	Lock,
-	Plus,
-	Search,
-	Tag,
-	Trash2
-} from 'lucide-react'
-import { useState } from 'react'
+import { Copy, Edit2, Globe, Lock, Plus, Search, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
+import { AttributeLibrarySelector } from '@/components/AttributeSelector'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,93 +30,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useUserRole } from '@/hooks/useUserRole'
 
-function AttributeLibrarySelector({ selectedIds, onChange }) {
-	const { getToken, isLoaded, isSignedIn } = useAuth()
-	const { t } = useTranslation()
-	const [search, setSearch] = useState('')
-
-	const { data: attributes = [], isLoading } = useQuery({
-		queryKey: ['attributes', search],
-		queryFn: async () => {
-			const token = await getToken()
-			const res = await axios.get(
-				`/api/attributes?search=${encodeURIComponent(search)}`,
-				{ headers: { Authorization: `Bearer ${token}` } }
-			)
-			return res.data || []
-		},
-		enabled: isLoaded && isSignedIn,
-		staleTime: 30000
-	})
-
-	const toggleAttribute = id => {
-		onChange(
-			selectedIds.includes(id)
-				? selectedIds.filter(item => item !== id)
-				: [...selectedIds, id]
-		)
-	}
-
-	return (
-		<div className="space-y-2 border border-slate-200 dark:border-slate-800 rounded-lg p-3 bg-slate-50/50 dark:bg-slate-900/50">
-			<div className="flex items-center justify-between gap-2">
-				<label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
-					<Tag className="h-3 w-3 text-indigo-500" />
-					{t('positionsPage.selector.title')}
-				</label>
-				<span className="text-[10px] text-slate-400">
-					{t('positionsPage.selector.selectedCount', {
-						count: selectedIds.length
-					})}
-				</span>
-			</div>
-
-			<div className="relative">
-				<Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
-				<Input
-					placeholder={t('positionsPage.selector.searchPlaceholder')}
-					value={search}
-					onChange={e => setSearch(e.target.value)}
-					className="pl-8 text-xs h-8 bg-white dark:bg-slate-950"
-				/>
-			</div>
-
-			<div className="max-h-[120px] overflow-y-auto space-y-1">
-				{isLoading ? (
-					<div className="text-xs text-slate-400 py-2 text-center">
-						{t('positionsPage.selector.loading')}
-					</div>
-				) : attributes.length === 0 ? (
-					<div className="text-xs text-slate-400 py-2 text-center">
-						{t('positionsPage.selector.empty')}
-					</div>
-				) : (
-					attributes.map(attr => {
-						const isSelected = selectedIds.includes(attr.id)
-						return (
-							<button
-								type="button"
-								key={attr.id}
-								onClick={() => toggleAttribute(attr.id)}
-								className={`w-full flex items-center justify-between p-1.5 rounded text-left text-xs transition-colors ${
-									isSelected
-										? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
-										: 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-800'
-								}`}
-							>
-								<span>{attr.name}</span>
-								{isSelected && (
-									<Check className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-								)}
-							</button>
-						)
-					})
-				)}
-			</div>
-		</div>
-	)
-}
-
 export default function PositionsPage() {
 	const { getToken, isLoaded, isSignedIn } = useAuth()
 	const { isLoaded: isClerkLoaded } = useUser()
@@ -136,6 +41,8 @@ export default function PositionsPage() {
 	const [isCreateOpen, setIsCreateOpen] = useState(false)
 	const [selectedPositionIds, setSelectedPositionIds] = useState([])
 
+	const [editingPosition, setEditingPosition] = useState(null)
+
 	const { register, handleSubmit, control, reset } = useForm({
 		defaultValues: {
 			title: '',
@@ -145,6 +52,22 @@ export default function PositionsPage() {
 			selectedAttributeIds: []
 		}
 	})
+
+	useEffect(() => {
+		if (editingPosition) {
+			reset({
+				title: editingPosition.title || '',
+				shortDescription: editingPosition.shortDescription || '',
+				maxProjects: editingPosition.maxProjects || 3,
+				tagsInput: editingPosition.projectTags
+					? editingPosition.projectTags.join(', ')
+					: '',
+				selectedAttributeIds:
+					editingPosition.templateAttributes?.map(a => a.attributeId) || []
+			})
+			setIsCreateOpen(true)
+		}
+	}, [editingPosition, reset])
 
 	const isRecruiterOrAdmin = isRecruiter || isAdmin
 
@@ -172,8 +95,21 @@ export default function PositionsPage() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['positions'] })
-			setIsCreateOpen(false)
-			reset()
+			handleCloseModal()
+		},
+		onError: err => alert(err.response?.data?.error || err.message)
+	})
+
+	const updateMutation = useMutation({
+		mutationFn: async ({ id, data }) => {
+			const token = await getToken()
+			await axios.put(`/api/positions/${id}`, data, {
+				headers: { Authorization: `Bearer ${token}` }
+			})
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['positions'] })
+			handleCloseModal()
 		},
 		onError: err => alert(err.response?.data?.error || err.message)
 	})
@@ -216,6 +152,18 @@ export default function PositionsPage() {
 		}
 	})
 
+	const handleCloseModal = () => {
+		setIsCreateOpen(false)
+		setEditingPosition(null)
+		reset({
+			title: '',
+			shortDescription: '',
+			maxProjects: 3,
+			tagsInput: '',
+			selectedAttributeIds: []
+		})
+	}
+
 	const toggleSelectAll = () => {
 		setSelectedPositionIds(
 			selectedPositionIds.length === positions.length
@@ -234,7 +182,7 @@ export default function PositionsPage() {
 	}
 
 	const onSubmit = data => {
-		createMutation.mutate({
+		const payload = {
 			title: data.title.trim(),
 			shortDescription: data.shortDescription.trim() || data.title.trim(),
 			maxProjects: Number(data.maxProjects) || 3,
@@ -244,7 +192,13 @@ export default function PositionsPage() {
 				.filter(Boolean),
 			accessRules: { isPublic: true },
 			attributeIds: data.selectedAttributeIds
-		})
+		}
+
+		if (editingPosition) {
+			updateMutation.mutate({ id: editingPosition.id, data: payload })
+		} else {
+			createMutation.mutate(payload)
+		}
 	}
 
 	if (!isClerkLoaded || isRoleLoading) {
@@ -267,7 +221,10 @@ export default function PositionsPage() {
 				{isRecruiterOrAdmin && (
 					<Dialog
 						open={isCreateOpen}
-						onOpenChange={setIsCreateOpen}
+						onOpenChange={open => {
+							if (!open) handleCloseModal()
+							else setIsCreateOpen(true)
+						}}
 					>
 						<DialogTrigger asChild>
 							<Button
@@ -282,7 +239,9 @@ export default function PositionsPage() {
 						<DialogContent className="sm:max-w-[520px]">
 							<DialogHeader>
 								<DialogTitle className="text-base font-semibold">
-									{t('positionsPage.dialog.title')}
+									{editingPosition
+										? 'Редактировать позицию'
+										: t('positionsPage.dialog.title')}
 								</DialogTitle>
 								<DialogDescription className="text-sm text-slate-500">
 									{t('positionsPage.dialog.description')}
@@ -359,17 +318,21 @@ export default function PositionsPage() {
 									<Button
 										type="button"
 										variant="ghost"
-										onClick={() => setIsCreateOpen(false)}
+										onClick={handleCloseModal}
 										className="text-sm h-9"
 									>
 										{t('positionsPage.dialog.btnCancel')}
 									</Button>
 									<Button
 										type="submit"
-										disabled={createMutation.isPending}
+										disabled={
+											createMutation.isPending || updateMutation.isPending
+										}
 										className="text-sm h-9"
 									>
-										{t('positionsPage.dialog.btnSubmit')}
+										{editingPosition
+											? 'Сохранить'
+											: t('positionsPage.dialog.btnSubmit')}
 									</Button>
 								</DialogFooter>
 							</form>
@@ -462,6 +425,7 @@ export default function PositionsPage() {
 								<TableHead className="text-sm">
 									{t('positionsPage.tableColAttrs')}
 								</TableHead>
+								<TableHead className="w-16 text-right"></TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -538,6 +502,22 @@ export default function PositionsPage() {
 													</span>
 												))}
 											</div>
+										</TableCell>
+
+										<TableCell
+											className="text-right"
+											onClick={e => e.stopPropagation()}
+										>
+											{isRecruiterOrAdmin && (
+												<Button
+													variant="ghost"
+													size="icon"
+													className="h-8 w-8 text-slate-500 hover:text-slate-900 dark:hover:text-white"
+													onClick={() => setEditingPosition(pos)}
+												>
+													<Edit2 className="h-4 w-4" />
+												</Button>
+											)}
 										</TableCell>
 									</TableRow>
 								)
