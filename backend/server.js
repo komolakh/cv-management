@@ -12,36 +12,38 @@ import userRoutes from './routes/users.js'
 
 const app = express()
 
-app.use((req, res, next) => {
-	console.log(`${req.method} ${req.url}`)
-	next()
-})
-
 const allowedOrigins = [
 	'https://cv-management-chi.vercel.app',
 	'http://localhost:5173'
 ]
 
-app.use(
-	cors({
-		origin: (origin, callback) => {
-			if (
-				!origin ||
-				allowedOrigins.includes(origin) ||
-				origin.endsWith('.vercel.app')
-			) {
-				callback(null, true)
-			} else {
-				callback(new Error('Not allowed by CORS'))
-			}
-		},
-		credentials: true,
-		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
-	})
-)
+const corsOptions = {
+	origin: (origin, callback) => {
+		if (
+			!origin ||
+			allowedOrigins.includes(origin) ||
+			origin.endsWith('.vercel.app')
+		) {
+			callback(null, true)
+		} else {
+			callback(new Error('Not allowed by CORS'))
+		}
+	},
+	credentials: true,
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+}
+
+app.use(cors(corsOptions))
+
+app.options('*', cors(corsOptions))
 
 app.use(express.json({ limit: '10mb' }))
+
+app.use((req, res, next) => {
+	console.log(`${req.method} ${req.url}`)
+	next()
+})
 
 app.use(clerkMiddleware())
 
