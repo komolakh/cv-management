@@ -14,7 +14,8 @@ const app = express()
 
 const allowedOrigins = [
 	'https://cv-management-chi.vercel.app',
-	'http://localhost:5173'
+	'http://localhost:5173',
+	'http://localhost:3000'
 ]
 
 const corsOptions = {
