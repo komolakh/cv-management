@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Filter, Loader2, Plus, Search } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -81,12 +81,6 @@ export default function AttributeLibraryPage() {
 	})
 
 	const handleBulkDelete = async () => {
-		if (
-			!confirm(
-				t('attributeLibrary.confirmDeleteBulk') || 'Delete selected items?'
-			)
-		)
-			return
 		try {
 			const token = await getToken()
 			await Promise.all(
@@ -140,61 +134,64 @@ export default function AttributeLibraryPage() {
 
 	if (isRoleLoading || isAttributesLoading || !isLoaded) {
 		return (
-			<div className="flex h-48 items-center justify-center text-sm text-slate-400">
-				<Loader2 className="h-5 w-5 animate-spin mr-2" />
-				{t('attributeLibrary.loading')}
+			<div className="flex h-48 items-center justify-center">
+				<Loader2 className=" animate-spin " />
 			</div>
 		)
 	}
 
 	return (
-		<div className="container mx-auto max-w-4xl p-6 space-y-6 text-slate-900 dark:text-slate-100">
-			<div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+		<div className="container mx-auto max-w-4xl p-6">
+			<div className="flex items-center justify-between pb-10">
 				<h1 className="text-xl font-bold">{t('attributeLibrary.title')}</h1>
 				{isRecruiter && (
-					<Button
-						onClick={() => handleOpenModal()}
-						size="sm"
-						variant="outline"
-						className="text-sm h-9 px-3"
-					>
-						<Plus className="h-4 w-4 mr-1.5" />
-						{t('attributeLibrary.btnAdd')}
-					</Button>
+					<>
+						<Button
+							onClick={() => handleOpenModal()}
+							variant="outline"
+						>
+							<Plus />
+							{t('attributeLibrary.btnAdd')}
+						</Button>
+
+						<AttributeDialog
+							isModalOpen={isModalOpen}
+							setIsModalOpen={setIsModalOpen}
+							editingAttribute={editingAttribute}
+							isRecruiter={isRecruiter}
+							categories={CATEGORIES}
+							attributeTypes={ATTRIBUTE_TYPES}
+							saveMutation={saveMutation}
+							onSubmit={data => saveMutation.mutate(data)}
+						/>
+					</>
 				)}
 			</div>
 
-			<div className="flex flex-col sm:flex-row gap-3">
+			<div className="flex flex-col sm:flex-row gap-3 mb-5">
 				<div className="relative flex-1">
-					<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
 					<Input
 						placeholder={t('attributeLibrary.searchPlaceholder')}
 						value={searchQuery}
 						onChange={e => setSearchQuery(e.target.value)}
-						className="pl-9 text-sm h-9"
 					/>
 				</div>
-				<div className="w-full sm:w-[180px]">
+				<div>
 					<Select
 						value={selectedType}
 						onValueChange={setSelectedType}
 					>
-						<SelectTrigger className="text-sm h-9">
-							<Filter className="h-4 w-4 mr-2 text-slate-400" />
+						<SelectTrigger>
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem
-								value="ALL"
-								className="text-sm"
-							>
+							<SelectItem value="ALL">
 								{t('attributeLibrary.filterAllTypes')}
 							</SelectItem>
 							{ATTRIBUTE_TYPES.map(type => (
 								<SelectItem
 									key={type}
 									value={type}
-									className="text-sm"
 								>
 									{type}
 								</SelectItem>
@@ -212,17 +209,6 @@ export default function AttributeLibraryPage() {
 				toggleSelectOne={toggleSelectOne}
 				handleEditSelected={handleEditSelected}
 				handleBulkDelete={handleBulkDelete}
-			/>
-
-			<AttributeDialog
-				isModalOpen={isModalOpen}
-				setIsModalOpen={setIsModalOpen}
-				editingAttribute={editingAttribute}
-				isRecruiter={isRecruiter}
-				categories={CATEGORIES}
-				attributeTypes={ATTRIBUTE_TYPES}
-				saveMutation={saveMutation}
-				onSubmit={data => saveMutation.mutate(data)}
 			/>
 		</div>
 	)

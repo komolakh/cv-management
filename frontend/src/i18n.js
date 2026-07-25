@@ -72,7 +72,6 @@ const resources = {
 				fetchError: 'Failed to load attribute library from server.',
 				saveError: 'Failed to save attribute. Key must be unique.',
 				deleteError: 'Failed to delete attribute.',
-				confirmDelete: 'Are you sure you want to delete this attribute?',
 				btnAdd: 'Add Attribute',
 				searchPlaceholder: 'Search by name...',
 				filterAllTypes: 'All Types',
@@ -119,8 +118,6 @@ const resources = {
 				btnCreate: 'Create Position',
 				searchPlaceholder: 'Search positions...',
 				noPositionsFound: 'No positions found',
-				deleteConfirm:
-					'Are you sure you want to delete the selected positions?',
 				tableColTitle: 'Title',
 				tableColDesc: 'Description',
 				tableColTags: 'Tags',
@@ -283,7 +280,6 @@ const resources = {
 				fetchError: 'Не удалось загрузить библиотеку атрибутов с сервера.',
 				saveError: 'Ошибка сохранения. Системный ключ должен быть уникальным.',
 				deleteError: 'Не удалось удалить атрибут.',
-				confirmDelete: 'Вы уверены, что хотите удалить этот атрибут?',
 				btnAdd: 'Добавить атрибут',
 				searchPlaceholder: 'Поиск по названию...',
 				filterAllTypes: 'Все типы',
@@ -330,8 +326,6 @@ const resources = {
 				title: 'Управление позициями',
 				btnCreate: 'Создать позицию',
 				searchPlaceholder: 'Поиск позиций...',
-
-				deleteConfirm: 'Вы уверены, что хотите удалить выбранные позиции?',
 				tableColTitle: 'Название',
 				tableColDesc: 'Описание',
 				tableColTags: 'Теги',

@@ -49,10 +49,7 @@ export function PositionsTable({
 
 					<Button
 						variant="destructive"
-						onClick={() =>
-							confirm(t('positionsPage.deleteConfirm')) &&
-							deleteMutation.mutate(selectedPositionIds)
-						}
+						onClick={() => deleteMutation.mutate(selectedPositionIds)}
 						disabled={deleteMutation.isPending}
 					>
 						<Trash2 />

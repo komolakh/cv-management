@@ -1,7 +1,7 @@
 import { useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Plus, Search } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +23,7 @@ export default function PositionsPage() {
 	const [selectedPositionIds, setSelectedPositionIds] = useState([])
 	const [editingPosition, setEditingPosition] = useState(null)
 
-	const { data: positions = [], isLoading: isPositionsLoading } = useQuery({
+	const { data: positions = [] } = useQuery({
 		queryKey: ['positions', search],
 		queryFn: async () => {
 			const token = await getToken()
@@ -160,33 +160,29 @@ export default function PositionsPage() {
 
 	if (!isClerkLoaded || isRoleLoading) {
 		return (
-			<div className="flex h-48 items-center justify-center text-sm text-slate-400">
-				{t('positionsPage.loading')}
+			<div className="flex h-48 items-center justify-center">
+				<Loader2 className=" animate-spin " />
 			</div>
 		)
 	}
 
 	return (
-		<div className="container mx-auto max-w-6xl p-6 space-y-6 text-slate-900 dark:text-slate-100">
-			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+		<div className="container mx-auto max-w-4xl p-6">
+			<div className="flex items-center justify-between pb-10">
 				<div>
-					<h1 className="text-xl font-bold flex items-center gap-2">
-						{t('positionsPage.title')}
-					</h1>
+					<h1 className="text-xl font-bold">{t('positionsPage.title')}</h1>
 				</div>
 
 				{isRecruiter && (
-					<div>
+					<>
 						<Button
-							size="sm"
 							variant="outline"
-							className="text-sm h-9 px-3"
 							onClick={() => {
 								setEditingPosition(null)
 								setIsCreateOpen(true)
 							}}
 						>
-							<Plus className="h-4 w-4 mr-1.5" />
+							<Plus />
 							{t('positionsPage.btnCreate')}
 						</Button>
 
@@ -202,36 +198,28 @@ export default function PositionsPage() {
 							createMutation={createMutation}
 							updateMutation={updateMutation}
 						/>
-					</div>
+					</>
 				)}
 			</div>
 
-			<div className="relative max-w-sm">
-				<Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+			<div className="mb-5">
 				<Input
 					placeholder={t('positionsPage.searchPlaceholder')}
 					value={search}
 					onChange={e => setSearch(e.target.value)}
-					className="pl-9 text-sm h-9"
 				/>
 			</div>
 
-			{isPositionsLoading ? (
-				<div className="flex h-48 items-center justify-center text-sm text-slate-400">
-					{t('positionsPage.loading')}
-				</div>
-			) : (
-				<PositionsTable
-					positions={positions}
-					selectedPositionIds={selectedPositionIds}
-					toggleSelectAll={toggleSelectAll}
-					toggleSelectRow={toggleSelectRow}
-					isRecruiter={isRecruiter}
-					handleEditSelected={handleEditSelected}
-					duplicateMutation={duplicateMutation}
-					deleteMutation={deleteMutation}
-				/>
-			)}
+			<PositionsTable
+				positions={positions}
+				selectedPositionIds={selectedPositionIds}
+				toggleSelectAll={toggleSelectAll}
+				toggleSelectRow={toggleSelectRow}
+				isRecruiter={isRecruiter}
+				handleEditSelected={handleEditSelected}
+				duplicateMutation={duplicateMutation}
+				deleteMutation={deleteMutation}
+			/>
 		</div>
 	)
 }
