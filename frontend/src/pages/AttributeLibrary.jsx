@@ -5,15 +5,9 @@ import { Filter, Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { AttributeDialog } from '@/components/AttributeDialog'
+import { AttributeTable } from '@/components/AttributeTable'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import {
 	Select,
@@ -22,14 +16,6 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table'
 import { useUserRole } from '@/hooks/useUserRole'
 
 const ATTRIBUTE_TYPES = [
@@ -59,7 +45,7 @@ const INITIAL_FORM_DATA = {
 export default function AttributeLibraryPage() {
 	const { t } = useTranslation()
 	const { getToken, isLoaded, isSignedIn } = useAuth()
-	const { isAdmin, isLoading: isRoleLoading } = useUserRole()
+	const { isRecruiter, isLoading: isRoleLoading } = useUserRole()
 	const queryClient = useQueryClient()
 
 	const [searchQuery, setSearchQuery] = useState('')
@@ -177,7 +163,7 @@ export default function AttributeLibraryPage() {
 		<div className="container mx-auto max-w-4xl p-6 space-y-6 text-slate-900 dark:text-slate-100">
 			<div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
 				<h1 className="text-xl font-bold">{t('attributeLibrary.title')}</h1>
-				{isAdmin && (
+				{isRecruiter && (
 					<Button
 						onClick={() => handleOpenModal()}
 						size="sm"
@@ -230,7 +216,7 @@ export default function AttributeLibraryPage() {
 				</div>
 			</div>
 
-			{isAdmin && selectedIds.length > 0 && (
+			{isRecruiter && selectedIds.length > 0 && (
 				<div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
 					<span className="text-xs font-medium text-slate-600 dark:text-slate-300">
 						{selectedIds.length} {t('attributeLibrary.selectedCount')}
@@ -260,193 +246,26 @@ export default function AttributeLibraryPage() {
 				</div>
 			)}
 
-			<div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
-				<Table>
-					<TableHeader className="bg-slate-50 dark:bg-slate-950">
-						<TableRow>
-							{isAdmin && (
-								<TableHead className="w-10 pl-4">
-									<Checkbox
-										checked={
-											filteredAttributes.length > 0 &&
-											selectedIds.length === filteredAttributes.length
-										}
-										onCheckedChange={toggleSelectAll}
-									/>
-								</TableHead>
-							)}
-							<TableHead className="text-sm">Категория</TableHead>
-							<TableHead className="text-sm">
-								{t('attributeLibrary.tableName')}
-							</TableHead>
-							<TableHead className="text-sm">
-								{t('attributeLibrary.tableType')}
-							</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{filteredAttributes.length === 0 ? (
-							<TableRow>
-								<TableCell
-									colSpan={isAdmin ? 4 : 3}
-									className="text-center py-8 text-sm text-slate-400"
-								>
-									{t('attributeLibrary.noData')}
-								</TableCell>
-							</TableRow>
-						) : (
-							filteredAttributes.map(attr => {
-								const isSelected = selectedIds.includes(attr.id)
-								return (
-									<TableRow
-										key={attr.id}
-										className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
-										onClick={() => {
-											if (isAdmin) {
-												toggleSelectOne(attr.id)
-											}
-										}}
-									>
-										{isAdmin && (
-											<TableCell
-												className="w-10 pl-4"
-												onClick={e => e.stopPropagation()}
-											>
-												<Checkbox
-													checked={isSelected}
-													onCheckedChange={() => toggleSelectOne(attr.id)}
-												/>
-											</TableCell>
-										)}
-										<TableCell className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-											{attr.category}
-										</TableCell>
-										<TableCell className="font-medium text-sm">
-											{attr.name}
-										</TableCell>
-										<TableCell>
-											<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
-												{attr.type}
-											</span>
-										</TableCell>
-									</TableRow>
-								)
-							})
-						)}
-					</TableBody>
-				</Table>
-			</div>
+			<AttributeTable
+				isRecruiter={isRecruiter}
+				filteredAttributes={filteredAttributes}
+				selectedIds={selectedIds}
+				toggleSelectAll={toggleSelectAll}
+				toggleSelectOne={toggleSelectOne}
+			/>
 
-			<Dialog
-				open={isModalOpen}
-				onOpenChange={setIsModalOpen}
-			>
-				<DialogContent className="sm:max-w-[420px]">
-					<DialogHeader>
-						<DialogTitle className="text-base font-semibold">
-							{editingAttribute
-								? t('attributeLibrary.dialogEditTitle')
-								: t('attributeLibrary.dialogCreateTitle')}
-						</DialogTitle>
-					</DialogHeader>
-
-					<form
-						onSubmit={e => {
-							e.preventDefault()
-							isAdmin && saveMutation.mutate(formData)
-						}}
-						className="space-y-4 py-2"
-					>
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelCategory')}
-							</label>
-							<Select
-								value={formData.category}
-								onValueChange={val =>
-									setFormData(p => ({ ...p, category: val }))
-								}
-							>
-								<SelectTrigger className="text-sm h-9">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									{CATEGORIES.map(cat => (
-										<SelectItem
-											key={cat}
-											value={cat}
-											className="text-sm"
-										>
-											{cat}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelName')}
-							</label>
-							<Input
-								required
-								value={formData.name}
-								onChange={e =>
-									setFormData(p => ({ ...p, name: e.target.value }))
-								}
-								placeholder="e.g. English Level"
-								className="text-sm h-9"
-							/>
-						</div>
-
-						<div className="space-y-1.5">
-							<label className="text-xs font-semibold uppercase text-slate-500">
-								{t('attributeLibrary.labelType')}
-							</label>
-							<Select
-								value={formData.type}
-								onValueChange={val => setFormData(p => ({ ...p, type: val }))}
-							>
-								<SelectTrigger className="text-sm h-9">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									{ATTRIBUTE_TYPES.map(type => (
-										<SelectItem
-											key={type}
-											value={type}
-											className="text-sm"
-										>
-											{type}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-
-						<DialogFooter className="pt-2">
-							<Button
-								type="button"
-								variant="ghost"
-								onClick={() => setIsModalOpen(false)}
-								className="text-sm h-9"
-							>
-								{t('attributeLibrary.btnCancel')}
-							</Button>
-							<Button
-								type="submit"
-								disabled={saveMutation.isPending}
-								className="text-sm h-9"
-							>
-								{saveMutation.isPending && (
-									<Loader2 className="h-4 w-4 animate-spin mr-2" />
-								)}
-								{t('attributeLibrary.btnSave')}
-							</Button>
-						</DialogFooter>
-					</form>
-				</DialogContent>
-			</Dialog>
+			<AttributeDialog
+				isModalOpen={isModalOpen}
+				setIsModalOpen={setIsModalOpen}
+				editingAttribute={editingAttribute}
+				isRecruiter={isRecruiter}
+				formData={formData}
+				setFormData={setFormData}
+				categories={CATEGORIES}
+				attributeTypes={ATTRIBUTE_TYPES}
+				saveMutation={saveMutation}
+				onSubmit={data => saveMutation.mutate(data)}
+			/>
 		</div>
 	)
 }

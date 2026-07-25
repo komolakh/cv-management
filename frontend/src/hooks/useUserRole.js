@@ -26,7 +26,7 @@ export function useUserRole() {
 		dbUser,
 		isLoading,
 		isAdmin: role === 'ADMINISTRATOR',
-		isRecruiter: role === 'RECRUITER',
-		canEdit: role === 'CANDIDATE' || role === 'ADMINISTRATOR'
+		isRecruiter: role === 'RECRUITER' || role === 'ADMINISTRATOR',
+		isCandidate: role === 'CANDIDATE' || role === 'ADMINISTRATOR'
 	}
 }

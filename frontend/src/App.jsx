@@ -72,13 +72,13 @@ function AuthAndSyncHandler() {
 }
 
 function MainLayout() {
-	const { isStaff, isAdmin } = useUserRole()
+	const { isRecruiter, isAdmin } = useUserRole()
 
 	return (
 		<Router>
 			<AuthAndSyncHandler />
 			<Header
-				isStaff={isStaff}
+				isRecruiter={isRecruiter}
 				isAdmin={isAdmin}
 			/>
 

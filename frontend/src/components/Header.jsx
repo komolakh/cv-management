@@ -78,7 +78,7 @@ export function ThemeToggle() {
 	)
 }
 
-export function NavLinks({ isStaff, isAdmin, onClick = () => {} }) {
+export function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
 	const { t } = useTranslation()
 
 	return (
@@ -101,7 +101,7 @@ export function NavLinks({ isStaff, isAdmin, onClick = () => {} }) {
 					<User className="h-4 w-4 text-slate-400" />
 					{t('header.profile')}
 				</Link>
-				{isStaff && (
+				{isRecruiter && (
 					<Link
 						to="/attribute"
 						onClick={onClick}
@@ -126,7 +126,7 @@ export function NavLinks({ isStaff, isAdmin, onClick = () => {} }) {
 	)
 }
 
-export function Header({ isStaff, isAdmin }) {
+export function Header({ isRecruiter, isAdmin }) {
 	const { t } = useTranslation()
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -158,7 +158,7 @@ export function Header({ isStaff, isAdmin }) {
 								</SheetHeader>
 								<nav className="flex flex-col space-y-2 mt-6 text-sm font-semibold">
 									<NavLinks
-										isStaff={isStaff}
+										isRecruiter={isRecruiter}
 										isAdmin={isAdmin}
 										onClick={() => setMobileMenuOpen(false)}
 									/>
@@ -176,7 +176,7 @@ export function Header({ isStaff, isAdmin }) {
 
 					<nav className="hidden md:flex items-center space-x-1 text-xs font-semibold">
 						<NavLinks
-							isStaff={isStaff}
+							isRecruiter={isRecruiter}
 							isAdmin={isAdmin}
 						/>
 					</nav>
