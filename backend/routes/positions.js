@@ -185,30 +185,28 @@ router.put('/:id', requireAuth, requireRecruiterOrAdmin, async (req, res) => {
 		const existing = await prisma.position.findUnique({ where: { id } })
 		if (!existing) return res.status(404).json({ error: 'Not found' })
 
-		const updatedPosition = await prisma.$transaction(async tx => {
-			await tx.positionTemplateAttributes.deleteMany({
-				where: { positionId: id }
-			})
+		await prisma.positionTemplateAttribute.deleteMany({
+			where: { positionId: id }
+		})
 
-			return tx.position.update({
-				where: { id },
-				data: {
-					title: title.trim(),
-					description: description || shortDescription || title.trim(),
-					...(accessRules && { accessRules }),
-					...(projectTags && {
-						projectTags: Array.isArray(projectTags) ? projectTags : []
-					}),
-					positionTemplateAttributes: {
-						create: (attributeIds || []).map(attributeId => ({ attributeId }))
-					}
-				},
-				include: {
-					positionTemplateAttributes: {
-						include: { attributeLibrary: true }
-					}
+		const updatedPosition = await prisma.position.update({
+			where: { id },
+			data: {
+				title: title.trim(),
+				description: description || shortDescription || title.trim(),
+				...(accessRules && { accessRules }),
+				...(projectTags && {
+					projectTags: Array.isArray(projectTags) ? projectTags : []
+				}),
+				positionTemplateAttributes: {
+					create: (attributeIds || []).map(attributeId => ({ attributeId }))
 				}
-			})
+			},
+			include: {
+				positionTemplateAttributes: {
+					include: { attributeLibrary: true }
+				}
+			}
 		})
 
 		res.json(formatPos(updatedPosition))

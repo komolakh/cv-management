@@ -110,6 +110,7 @@ export default function PositionsPage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['positions'] })
 			handleCloseModal()
+			setSelectedPositionIds([])
 		},
 		onError: err => alert(err.response?.data?.error || err.message)
 	})
@@ -179,6 +180,14 @@ export default function PositionsPage() {
 				? selectedPositionIds.filter(item => item !== id)
 				: [...selectedPositionIds, id]
 		)
+	}
+
+	const handleEditSelected = () => {
+		if (selectedPositionIds.length !== 1) return
+		const posToEdit = positions.find(p => p.id === selectedPositionIds[0])
+		if (posToEdit) {
+			setEditingPosition(posToEdit)
+		}
 	}
 
 	const onSubmit = data => {
@@ -359,6 +368,17 @@ export default function PositionsPage() {
 						})}
 					</span>
 					<div className="flex items-center gap-2">
+						{selectedPositionIds.length === 1 && (
+							<Button
+								size="sm"
+								variant="ghost"
+								onClick={handleEditSelected}
+								className="h-8 text-xs gap-1 hover:bg-slate-800 dark:hover:bg-slate-200"
+							>
+								<Edit2 className="h-3.5 w-3.5" />
+								Редактировать
+							</Button>
+						)}
 						<Button
 							size="sm"
 							variant="ghost"
@@ -425,7 +445,6 @@ export default function PositionsPage() {
 								<TableHead className="text-sm">
 									{t('positionsPage.tableColAttrs')}
 								</TableHead>
-								<TableHead className="w-16 text-right"></TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -502,22 +521,6 @@ export default function PositionsPage() {
 													</span>
 												))}
 											</div>
-										</TableCell>
-
-										<TableCell
-											className="text-right"
-											onClick={e => e.stopPropagation()}
-										>
-											{isRecruiterOrAdmin && (
-												<Button
-													variant="ghost"
-													size="icon"
-													className="h-8 w-8 text-slate-500 hover:text-slate-900 dark:hover:text-white"
-													onClick={() => setEditingPosition(pos)}
-												>
-													<Edit2 className="h-4 w-4" />
-												</Button>
-											)}
 										</TableCell>
 									</TableRow>
 								)
