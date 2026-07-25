@@ -45,10 +45,6 @@ const profileSchema = z.object({
 	attrs: z.record(z.string(), z.string()).default({})
 })
 
-const SectionHeader = ({ title }) => (
-	<h2 className="text-sm font-bold ">{title}</h2>
-)
-
 export default function ProfilePage() {
 	const { isLoaded, isSignedIn } = useAuth()
 	const { user: clerkUser, isLoaded: isClerkLoaded } = useUser()
@@ -212,7 +208,7 @@ export default function ProfilePage() {
 			</div>
 
 			<div className="space-y-4">
-				<SectionHeader title={t('profile.meSection', 'Me')} />
+				<h2 className="text-sm font-bold ">{t('profile.meSection')}</h2>
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 					<Input
 						{...register('firstName')}

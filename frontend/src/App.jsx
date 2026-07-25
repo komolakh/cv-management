@@ -101,7 +101,7 @@ function MainLayout() {
 						element={<CvConstructor />}
 					/>
 					<Route
-						path="/attribute"
+						path="/attribute-library"
 						element={<AttributeLibraryPage />}
 					/>
 					<Route

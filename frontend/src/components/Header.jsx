@@ -19,31 +19,26 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger
-} from './ui/sheet'
+import { Button } from './ui/button'
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 
-export function LanguageSwitcher() {
+function LanguageSwitcher() {
 	const { i18n } = useTranslation()
 	const toggleLang = () =>
 		i18n.changeLanguage(i18n.language?.startsWith('ru') ? 'en' : 'ru')
 
 	return (
-		<button
+		<Button
 			onClick={toggleLang}
-			className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer text-slate-700 dark:text-slate-300"
+			variant="outline"
 		>
-			<Globe className="h-3.5 w-3.5 text-slate-500" />
+			<Globe />
 			<span>{i18n.language?.startsWith('ru') ? 'EN' : 'RU'}</span>
-		</button>
+		</Button>
 	)
 }
 
-export function ThemeToggle() {
+function ThemeToggle() {
 	const [isDark, setIsDark] = useState(() => {
 		return (
 			document.documentElement.classList.contains('dark') ||
@@ -64,21 +59,17 @@ export function ThemeToggle() {
 	}, [isDark])
 
 	return (
-		<button
+		<Button
 			onClick={() => setIsDark(!isDark)}
-			className="flex items-center justify-center p-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer text-slate-700 dark:text-slate-300"
+			variant="outline"
 			title="Toggle theme"
 		>
-			{isDark ? (
-				<Sun className="h-3.5 w-3.5 text-amber-400" />
-			) : (
-				<Moon className="h-3.5 w-3.5 text-slate-600" />
-			)}
-		</button>
+			{isDark ? <Sun /> : <Moon />}
+		</Button>
 	)
 }
 
-export function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
+function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
 	const { t } = useTranslation()
 
 	return (
@@ -86,7 +77,7 @@ export function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
 			<Link
 				to="/positions"
 				onClick={onClick}
-				className="px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5"
+				className="px-3 py-2 flex items-center gap-1.5"
 			>
 				<LayoutDashboard className="h-4 w-4 text-slate-400" />
 				{t('header.positions')}
@@ -96,16 +87,16 @@ export function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
 				<Link
 					to="/profile"
 					onClick={onClick}
-					className="px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5"
+					className="px-3 py-2 flex items-center gap-1.5"
 				>
 					<User className="h-4 w-4 text-slate-400" />
 					{t('header.profile')}
 				</Link>
 				{isRecruiter && (
 					<Link
-						to="/attribute"
+						to="/attribute-library"
 						onClick={onClick}
-						className="px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5"
+						className="px-3 py-2 flex items-center gap-1.5"
 					>
 						<Database className="h-4 w-4 text-slate-400" />
 						{t('header.attributeLibrary')}
@@ -115,9 +106,9 @@ export function NavLinks({ isRecruiter, isAdmin, onClick = () => {} }) {
 					<Link
 						to="/admin"
 						onClick={onClick}
-						className="px-3 py-2 rounded-lg text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/50 flex items-center gap-1.5 font-bold"
+						className="px-3 py-2 flex items-center gap-1.5"
 					>
-						<Shield className="h-4 w-4 text-amber-500" />
+						<Shield className="h-4 w-4 text-slate-400" />
 						{t('header.admin')}
 					</Link>
 				)}
@@ -131,32 +122,21 @@ export function Header({ isRecruiter, isAdmin }) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
 	return (
-		<header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 w-full">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-				<div className="flex items-center space-x-4 sm:space-x-8">
+		<header>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+				<div className="flex items-center space-x-4">
 					<div className="md:hidden">
 						<Sheet
 							open={mobileMenuOpen}
 							onOpenChange={setMobileMenuOpen}
 						>
 							<SheetTrigger asChild>
-								<button
-									className="p-2 border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer"
-									aria-label="Open menu"
-								>
-									<Menu className="h-5 w-5" />
+								<button aria-label="Open menu">
+									<Menu />
 								</button>
 							</SheetTrigger>
-							<SheetContent
-								side="left"
-								className="w-[280px] sm:w-[320px]"
-							>
-								<SheetHeader>
-									<SheetTitle className="text-left font-black tracking-tight text-slate-900 dark:text-white">
-										{t('header.logo')}
-									</SheetTitle>
-								</SheetHeader>
-								<nav className="flex flex-col space-y-2 mt-6 text-sm font-semibold">
+							<SheetContent side="left">
+								<nav className="flex flex-col space-y-2 mt-15 font-semibold">
 									<NavLinks
 										isRecruiter={isRecruiter}
 										isAdmin={isAdmin}
@@ -169,7 +149,7 @@ export function Header({ isRecruiter, isAdmin }) {
 
 					<Link
 						to="/"
-						className="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+						className="font-black text-lg"
 					>
 						<span>{t('header.logo')}</span>
 					</Link>
@@ -188,14 +168,10 @@ export function Header({ isRecruiter, isAdmin }) {
 					<SignedOut>
 						<div className="space-x-2 flex items-center">
 							<SignInButton mode="modal">
-								<button className="px-3.5 py-1.5 text-xs font-semibold border border-slate-200 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
-									{t('header.signIn')}
-								</button>
+								<Button variant="outline">{t('header.signIn')}</Button>
 							</SignInButton>
 							<SignUpButton mode="modal">
-								<button className="px-3.5 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm cursor-pointer">
-									{t('header.signUp')}
-								</button>
+								<Button>{t('header.signUp')}</Button>
 							</SignUpButton>
 						</div>
 					</SignedOut>
