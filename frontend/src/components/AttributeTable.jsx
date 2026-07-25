@@ -9,20 +9,45 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import { Pencil, Trash2 } from 'lucide-react'
+import { Button } from './ui/button'
 
 export function AttributeTable({
 	isRecruiter,
 	filteredAttributes,
 	selectedIds,
 	toggleSelectAll,
-	toggleSelectOne
+	toggleSelectOne,
+	handleEditSelected,
+	handleBulkDelete
 }) {
 	const { t } = useTranslation()
 
 	return (
-		<div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
+		<div className="space-y-4">
+			{isRecruiter && selectedIds.length > 0 && (
+				<div className="dark:bg-slate-900 dark:text-white bg-zinc-50 text-slate-900 px-4 py-2.5 rounded-md flex items-center gap-2">
+					{selectedIds.length === 1 && (
+						<Button
+							variant="outline"
+							onClick={handleEditSelected}
+						>
+							<Pencil />
+							{t('attributeLibrary.btnEditSelected')}
+						</Button>
+					)}
+					<Button
+						variant="destructive"
+						onClick={handleBulkDelete}
+					>
+						<Trash2 />
+						{t('attributeLibrary.btnDeleteSelected')}
+					</Button>
+				</div>
+			)}
+
 			<Table>
-				<TableHeader className="bg-slate-50 dark:bg-slate-950">
+				<TableHeader>
 					<TableRow>
 						{isRecruiter && (
 							<TableHead className="w-10 pl-4">
@@ -35,64 +60,37 @@ export function AttributeTable({
 								/>
 							</TableHead>
 						)}
-						<TableHead className="text-sm">Категория</TableHead>
-						<TableHead className="text-sm">
-							{t('attributeLibrary.tableName')}
-						</TableHead>
-						<TableHead className="text-sm">
-							{t('attributeLibrary.tableType')}
-						</TableHead>
+						<TableHead>{t('attributeLibrary.tableCategory')}</TableHead>
+						<TableHead>{t('attributeLibrary.tableName')}</TableHead>
+						<TableHead>{t('attributeLibrary.tableType')}</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{filteredAttributes.length === 0 ? (
-						<TableRow>
-							<TableCell
-								colSpan={isRecruiter ? 4 : 3}
-								className="text-center py-8 text-sm text-slate-400"
-							>
-								{t('attributeLibrary.noData')}
-							</TableCell>
-						</TableRow>
-					) : (
-						filteredAttributes.map(attr => {
-							const isSelected = selectedIds.includes(attr.id)
-							return (
-								<TableRow
-									key={attr.id}
-									className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
-									onClick={() => {
-										if (isRecruiter) {
-											toggleSelectOne(attr.id)
-										}
-									}}
-								>
-									{isRecruiter && (
-										<TableCell
-											className="w-10 pl-4"
-											onClick={e => e.stopPropagation()}
-										>
-											<Checkbox
-												checked={isSelected}
-												onCheckedChange={() => toggleSelectOne(attr.id)}
-											/>
-										</TableCell>
-									)}
-									<TableCell className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-										{attr.category}
+					{filteredAttributes.map(attr => {
+						const isSelected = selectedIds.includes(attr.id)
+						return (
+							<TableRow key={attr.id}>
+								{isRecruiter && (
+									<TableCell
+										className="w-10 pl-4"
+										onClick={e => e.stopPropagation()}
+									>
+										<Checkbox
+											checked={isSelected}
+											onCheckedChange={() => toggleSelectOne(attr.id)}
+										/>
 									</TableCell>
-									<TableCell className="font-medium text-sm">
-										{attr.name}
-									</TableCell>
-									<TableCell>
-										<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
-											{attr.type}
-										</span>
-									</TableCell>
-								</TableRow>
-							)
-						})
-					)}
+								)}
+								<TableCell>{attr.category}</TableCell>
+								<TableCell>{attr.name}</TableCell>
+								<TableCell>
+									<span className="text-xs font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
+										{attr.type}
+									</span>
+								</TableCell>
+							</TableRow>
+						)
+					})}
 				</TableBody>
 			</Table>
 		</div>

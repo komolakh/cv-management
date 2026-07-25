@@ -32,7 +32,6 @@ const resources = {
 				newCvs24h: 'New CVs (24h)',
 				latestPositions: 'Latest Open Positions',
 				searchPlaceholder: 'Search by title...',
-				noPositionsFound: 'No positions found.',
 				tableCaption: 'Recently created or updated job openings.',
 				tableColTitle: 'Position Title',
 				tableColDesc: 'Description',
@@ -77,9 +76,8 @@ const resources = {
 				btnAdd: 'Add Attribute',
 				searchPlaceholder: 'Search by name...',
 				filterAllTypes: 'All Types',
-				noData: 'No library attributes found matching your criteria.',
+				tableCategory: 'Category',
 				tableName: 'Name',
-				tableKey: 'Unique Key',
 				tableType: 'Data Type',
 				tableDescription: 'Description',
 				tableActions: 'Actions',
@@ -125,7 +123,6 @@ const resources = {
 					'Are you sure you want to delete the selected positions?',
 				tableColTitle: 'Title',
 				tableColDesc: 'Description',
-				tableColAccess: 'Access',
 				tableColTags: 'Tags',
 				tableColAttrs: 'Attributes',
 				selector: {
@@ -154,6 +151,7 @@ const resources = {
 					selectedCount_zero: 'Selected positions: 0',
 					selectedCount_one: 'Selected positions: 1',
 					selectedCount_other: 'Selected positions: {{count}}',
+					btnEdit: 'Edit',
 					btnDuplicate: 'Duplicate',
 					btnDelete: 'Delete'
 				}
@@ -289,9 +287,8 @@ const resources = {
 				btnAdd: 'Добавить атрибут',
 				searchPlaceholder: 'Поиск по названию...',
 				filterAllTypes: 'Все типы',
-				noData: 'Атрибуты библиотеки не найдены.',
+				tableCategory: 'Категория',
 				tableName: 'Название',
-				tableKey: 'Системный ключ',
 				tableType: 'Тип данных',
 				tableDescription: 'Описание',
 				tableActions: 'Действия',
@@ -333,11 +330,10 @@ const resources = {
 				title: 'Управление позициями',
 				btnCreate: 'Создать позицию',
 				searchPlaceholder: 'Поиск позиций...',
-				noPositionsFound: 'Позиции не найдены',
+
 				deleteConfirm: 'Вы уверены, что хотите удалить выбранные позиции?',
 				tableColTitle: 'Название',
 				tableColDesc: 'Описание',
-				tableColAccess: 'Доступ',
 				tableColTags: 'Теги',
 				tableColAttrs: 'Атрибуты',
 				selector: {
@@ -366,6 +362,7 @@ const resources = {
 					selectedCount_zero: 'Выбрано позиций: 0',
 					selectedCount_one: 'Выбрано позиций: 1',
 					selectedCount_other: 'Выбрано позиций: {{count}}',
+					btnEdit: 'Изменить',
 					btnDuplicate: 'Дублировать',
 					btnDelete: 'Удалить'
 				}

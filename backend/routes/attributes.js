@@ -80,14 +80,7 @@ async function saveAttribute(req, res) {
 async function deleteAttribute(req, res) {
 	try {
 		const { id } = req.params
-
-		await prisma.$transaction(async tx => {
-			if (tx.attributeUsage) {
-				await tx.attributeUsage.deleteMany({ where: { attributeId: id } })
-			}
-			await tx.attributeLibrary.delete({ where: { id } })
-		})
-
+		await prisma.attributeLibrary.delete({ where: { id } })
 		res.json({ success: true })
 	} catch (err) {
 		console.error(err)

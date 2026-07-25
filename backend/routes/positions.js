@@ -266,12 +266,7 @@ router.delete(
 	async (req, res) => {
 		try {
 			const { id } = req.params
-			await prisma.$transaction([
-				prisma.positionTemplateAttributes.deleteMany({
-					where: { positionId: id }
-				}),
-				prisma.position.delete({ where: { id } })
-			])
+			await prisma.position.delete({ where: { id } })
 			res.json({ success: true })
 		} catch (err) {
 			console.error(err)

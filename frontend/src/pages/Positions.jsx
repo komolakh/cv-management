@@ -154,8 +154,7 @@ export default function PositionsPage() {
 		)
 	}
 
-	const toggleSelectRow = (id, e) => {
-		e.stopPropagation()
+	const toggleSelectRow = id => {
 		setSelectedPositionIds(
 			selectedPositionIds.includes(id)
 				? selectedPositionIds.filter(item => item !== id)

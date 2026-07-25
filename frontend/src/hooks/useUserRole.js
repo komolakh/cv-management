@@ -13,7 +13,7 @@ export function useUserRole() {
 			const res = await axios.get('/api/users/me', {
 				headers: { Authorization: `Bearer ${token}` }
 			})
-			return res.data?.user || null
+			return res.data?.user
 		},
 		enabled: isLoaded && isSignedIn,
 		staleTime: 1000 * 60 * 5

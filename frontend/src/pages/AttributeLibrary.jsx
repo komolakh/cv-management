@@ -1,7 +1,7 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Filter, Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Filter, Loader2, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -216,42 +216,14 @@ export default function AttributeLibraryPage() {
 				</div>
 			</div>
 
-			{isRecruiter && selectedIds.length > 0 && (
-				<div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700">
-					<span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-						{selectedIds.length} {t('attributeLibrary.selectedCount')}
-					</span>
-					<div className="flex items-center gap-2">
-						{selectedIds.length === 1 && (
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={handleEditSelected}
-								className="h-8 text-xs px-2.5 bg-white dark:bg-slate-900"
-							>
-								<Pencil className="h-3.5 w-3.5 mr-1.5" />
-								{t('attributeLibrary.btnEditSelected')}
-							</Button>
-						)}
-						<Button
-							variant="destructive"
-							size="sm"
-							onClick={handleBulkDelete}
-							className="h-8 text-xs px-2.5"
-						>
-							<Trash2 className="h-3.5 w-3.5 mr-1.5" />
-							{t('attributeLibrary.btnDeleteSelected')}
-						</Button>
-					</div>
-				</div>
-			)}
-
 			<AttributeTable
 				isRecruiter={isRecruiter}
 				filteredAttributes={filteredAttributes}
 				selectedIds={selectedIds}
 				toggleSelectAll={toggleSelectAll}
 				toggleSelectOne={toggleSelectOne}
+				handleEditSelected={handleEditSelected}
+				handleBulkDelete={handleBulkDelete}
 			/>
 
 			<AttributeDialog
