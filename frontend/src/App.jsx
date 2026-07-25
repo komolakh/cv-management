@@ -82,7 +82,7 @@ function MainLayout() {
 				isAdmin={isAdmin}
 			/>
 
-			<main className="min-h-[calc(100vh-64px)] bg-slate-50/50 dark:bg-slate-950">
+			<main>
 				<Routes>
 					<Route
 						path="/"
