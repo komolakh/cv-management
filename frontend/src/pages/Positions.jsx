@@ -1,10 +1,11 @@
 import { useAuth, useUser } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Loader2, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import Loader from '@/components/Loader'
 import { PositionsDialog } from '@/components/PositionsDialog'
 import { PositionsTable } from '@/components/PositionsTable'
 import { Button } from '@/components/ui/button'
@@ -159,11 +160,7 @@ export default function PositionsPage() {
 	}
 
 	if (!isClerkLoaded || isRoleLoading) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	return (

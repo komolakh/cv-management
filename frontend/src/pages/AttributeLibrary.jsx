@@ -1,12 +1,13 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Loader2, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { AttributeDialog } from '@/components/AttributeDialog'
 import { AttributeTable } from '@/components/AttributeTable'
+import Loader from '@/components/Loader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -133,11 +134,7 @@ export default function AttributeLibraryPage() {
 	}
 
 	if (isRoleLoading || isAttributesLoading || !isLoaded) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	return (

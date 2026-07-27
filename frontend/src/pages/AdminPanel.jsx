@@ -1,9 +1,10 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Loader2, Users } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import Loader from '@/components/Loader'
 import { Badge } from '@/components/ui/badge'
 import {
 	Select,
@@ -69,11 +70,7 @@ export default function AdminPanel() {
 	})
 
 	if (isRoleLoading || isUsersLoading) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	return (

@@ -1,12 +1,13 @@
 import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { Calendar, Check, Edit2, Loader2, Mail } from 'lucide-react'
+import { Calendar, Check, Edit2, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import { useParams } from 'react-router-dom'
 
+import Loader from '@/components/Loader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,11 +67,7 @@ export default function CvConstructor() {
 	}
 
 	if (isLoading) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	const {

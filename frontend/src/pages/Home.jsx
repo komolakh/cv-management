@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
+import Loader from '@/components/Loader'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,7 +15,6 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
-import { Loader2 } from 'lucide-react'
 
 export default function Home() {
 	const { t } = useTranslation()
@@ -45,11 +45,7 @@ export default function Home() {
 	)
 
 	if (isLoading) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	return (

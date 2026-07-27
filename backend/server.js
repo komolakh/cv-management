@@ -59,7 +59,7 @@ app.get('/health', (req, res) => {
 })
 
 app.use((req, res) => {
-	res.status(404).json({ error: `${req.originalUrl} not found.` })
+	res.status(404).json({ error: `${req.originalUrl} not found` })
 })
 
 app.use((err, req, res, next) => {

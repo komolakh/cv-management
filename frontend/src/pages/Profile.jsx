@@ -5,7 +5,6 @@ import axios from 'axios'
 import {
 	ArrowRight,
 	Calendar,
-	Loader2,
 	MapPin,
 	MoreVertical,
 	Plus,
@@ -19,6 +18,7 @@ import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
 
+import Loader from '@/components/Loader'
 import { ProfileDialog } from '@/components/ProfileDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -153,11 +153,7 @@ export default function ProfilePage() {
 	})
 
 	if (!isClerkLoaded || isRoleLoading || isLoading) {
-		return (
-			<div className="flex h-48 items-center justify-center">
-				<Loader2 className=" animate-spin " />
-			</div>
-		)
+		return <Loader />
 	}
 
 	const projects = profileData?.projects || []
@@ -174,7 +170,7 @@ export default function ProfilePage() {
 							className="h-full w-full object-cover"
 						/>
 					) : (
-						<User />
+						<User className="h-full w-full object-cover" />
 					)}
 				</div>
 				<div className="space-y-1.5">
