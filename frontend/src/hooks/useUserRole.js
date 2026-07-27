@@ -20,9 +20,11 @@ export function useUserRole() {
 	})
 
 	const role = dbUser?.role
+	const email = dbUser?.email
 
 	return {
 		role,
+		email,
 		dbUser,
 		isLoading,
 		isAdmin: role === 'ADMINISTRATOR',

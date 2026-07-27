@@ -9,8 +9,7 @@ import {
 	MoreVertical,
 	Plus,
 	Trash2,
-	User,
-	X
+	User
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -19,15 +18,9 @@ import ReactMarkdown from 'react-markdown'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
 
+import { ProfileDialog } from '@/components/ProfileDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -35,7 +28,6 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { useUserRole } from '@/hooks/useUserRole'
 
 const profileSchema = z.object({
@@ -55,7 +47,6 @@ export default function ProfilePage() {
 
 	const [editingProject, setEditingProject] = useState(null)
 	const [selectedLibraryAttr, setSelectedLibraryAttr] = useState('')
-	const [tagInput, setTagInput] = useState('')
 
 	const { data: profileData, isLoading } = useQuery({
 		queryKey: ['profile'],
@@ -173,8 +164,8 @@ export default function ProfilePage() {
 
 	return (
 		<div className="container mx-auto max-w-4xl p-6">
-			<div className="flex items-center gap-5 pb-6 border-b ">
-				<div className="h-20 w-20 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+			<div className="flex items-center gap-5 pb-6 border-b">
+				<div className="h-20 w-20 rounded-full overflow-hidden">
 					{watchedValues?.photoUrl ? (
 						<img
 							src={watchedValues.photoUrl}
@@ -182,88 +173,78 @@ export default function ProfilePage() {
 							className="h-full w-full object-cover"
 						/>
 					) : (
-						<User className="h-8 w-8 text-slate-400" />
+						<User />
 					)}
 				</div>
 				<div className="space-y-1.5">
 					<div className="flex items-center gap-3">
-						<h1 className="text-2xl font-bold tracking-tight">
-							{watchedValues?.firstName || t('profile.defaultFirstName')}{' '}
-							{watchedValues?.lastName || t('profile.defaultLastName')}
+						<h1 className="text-xl font-bold">
+							{watchedValues?.firstName || ''} {watchedValues?.lastName || ''}
 						</h1>
-						{profileData?.user?.role && (
-							<Badge
-								variant="secondary"
-								className="text-xs font-medium px-2.5 py-0.5"
-							>
-								{profileData.user.role}
-							</Badge>
-						)}
+						{profileData?.user?.role && <Badge>{profileData.user.role}</Badge>}
 					</div>
-					<p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-						<MapPin className="h-4 w-4" />
+					<p className="flex gap-1.5">
+						<MapPin />
 						{watchedValues?.location || t('profile.noLocation')}
 					</p>
 				</div>
 			</div>
-
 			<div className="space-y-4">
-				<h2 className="text-sm font-bold ">{t('profile.meSection')}</h2>
+				<h1 className="text-l font-bold">{t('profile.meSection')}</h1>
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 					<Input
 						{...register('firstName')}
 						disabled={isReadOnly}
 						placeholder={t('profile.firstNameLabel')}
-						className="text-sm h-10"
 					/>
 					<Input
 						{...register('lastName')}
 						disabled={isReadOnly}
 						placeholder={t('profile.lastNameLabel')}
-						className="text-sm h-10"
 					/>
 				</div>
 				<Input
 					{...register('location')}
 					disabled={isReadOnly}
 					placeholder={t('profile.locationLabel')}
-					className="text-sm h-10"
 				/>
 			</div>
 
-			<div className="space-y-4 pt-2">
-				<h1>{t('profile.infoSection')} </h1>
+			<div className="space-y-4 pt-5">
+				<h1 className="text-l font-bold">{t('profile.infoSection')} </h1>
 
 				{!isReadOnly && (
-					<div className="flex gap-2">
+					<div className="flex gap-10">
 						<select
 							value={selectedLibraryAttr}
 							onChange={e => setSelectedLibraryAttr(e.target.value)}
-							className="flex-1 text-sm px-3 py-2 h-10 border border-slate-200 dark:border-slate-800 rounded-lg bg-transparent"
+							className="flex-1"
 						>
-							<option value="">
+							<option
+								value=""
+								className="dark:bg-black dark:text-white "
+							>
 								{t('profile.selectAttributePlaceholder')}
 							</option>
 							{libraryAttributes.map(attr => (
 								<option
 									key={attr.id}
 									value={attr.id}
+									className="dark:bg-black dark:text-white"
 								>
 									{attr.name}
 								</option>
 							))}
 						</select>
 						<Button
-							size="default"
 							variant="outline"
 							disabled={!selectedLibraryAttr}
 							onClick={() => {
 								addAttrMutation.mutate(selectedLibraryAttr)
 								setSelectedLibraryAttr('')
 							}}
-							className="h-10 px-4 shrink-0"
 						>
-							<Plus className="h-4 w-4 mr-1.5" /> {t('profile.btnAdd')}
+							<Plus /> {t('profile.btnAdd')}
 						</Button>
 					</div>
 				)}
@@ -275,23 +256,20 @@ export default function ProfilePage() {
 							className="group flex items-center gap-2"
 						>
 							<div className="flex-1 space-y-1">
-								<span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
+								<span>
 									{attr.attributeLibrary?.name || attr.attribute?.name}
 								</span>
 								<Input
 									{...register(`attrs.${attr.id}`)}
 									disabled={isReadOnly}
-									className="text-sm h-10"
 								/>
 							</div>
 							{!isReadOnly && (
 								<Button
-									variant="ghost"
-									size="icon"
+									variant="destructive"
 									onClick={() => removeAttrMutation.mutate(attr.id)}
-									className="h-10 w-10 text-slate-400 hover:text-red-500 self-end"
 								>
-									<Trash2 className="h-4 w-4" />
+									<Trash2 />
 								</Button>
 							)}
 						</div>
@@ -299,12 +277,13 @@ export default function ProfilePage() {
 				</div>
 			</div>
 
-			<div className="space-y-4 pt-2">
+			<div className="space-y-4 pt-5">
 				<div className="flex justify-between items-center">
-					<h1>{t('profile.projectsSection', 'Projects')}</h1>
+					<h1 className="text-l font-bold">
+						{t('profile.projectsSection', 'Projects')}
+					</h1>
 					{!isReadOnly && (
 						<Button
-							size="sm"
 							variant="outline"
 							onClick={() =>
 								setEditingProject({
@@ -315,34 +294,25 @@ export default function ProfilePage() {
 									tags: []
 								})
 							}
-							className="text-xs h-9 px-3"
 						>
-							<Plus className="h-3.5 w-3.5 mr-1.5" /> {t('profile.btnAdd')}
+							<Plus /> {t('profile.btnAdd')}
 						</Button>
 					)}
 				</div>
 
 				<div className="space-y-4">
-					{projects.length === 0 ? (
-						<p className="py-6 text-sm text-slate-400 text-center border border-dashed rounded-xl">
-							{t('profile.noProjects')}
-						</p>
-					) : (
+					{projects.length > 0 &&
 						projects.map(proj => (
 							<div
 								key={proj.id}
-								className="p-5 border border-slate-200 dark:border-slate-800 rounded-xl space-y-3 relative group bg-white dark:bg-slate-900/40 shadow-sm"
+								className="p-3 border  rounded-md space-y-3 relative group"
 							>
 								{!isReadOnly && (
 									<div className="absolute top-4 right-4">
 										<DropdownMenu>
 											<DropdownMenuTrigger asChild>
-												<Button
-													variant="ghost"
-													size="sm"
-													className="h-8 w-8 p-0 text-slate-400"
-												>
-													<MoreVertical className="h-4 w-4" />
+												<Button variant="ghost">
+													<MoreVertical />
 												</Button>
 											</DropdownMenuTrigger>
 											<DropdownMenuContent align="end">
@@ -361,9 +331,7 @@ export default function ProfilePage() {
 										</DropdownMenu>
 									</div>
 								)}
-								<h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 pr-8">
-									{proj.name}
-								</h3>
+								<h3 className="font-semibold ">{proj.name}</h3>
 								<p className="text-xs text-slate-500 flex items-center gap-1.5">
 									<Calendar className="h-3.5 w-3.5" />
 									{proj.startDate
@@ -374,36 +342,31 @@ export default function ProfilePage() {
 										? new Date(proj.endDate).toLocaleDateString()
 										: t('profile.presentDate')}
 								</p>
-								<div className="text-sm text-slate-700 dark:text-slate-300 prose dark:prose-invert max-w-none">
+								<div className="text-sm e">
 									<ReactMarkdown>{proj.description || ''}</ReactMarkdown>
 								</div>
 								{proj.tags?.length > 0 && (
-									<div className="flex flex-wrap gap-1.5 pt-1">
+									<div className="flex gap-1.5">
 										{proj.tags.map(tag => (
-											<span
+											<Badge
 												key={tag}
-												className="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md font-medium"
+												variant="secondary"
 											>
-												#{tag}
-											</span>
+												{tag}
+											</Badge>
 										))}
 									</div>
 								)}
 							</div>
-						))
-					)}
+						))}
 				</div>
 			</div>
-
 			<div className="space-y-4 pt-2">
-				<h1>{t('profile.cvsSection', 'CVs')}</h1>
+				<h1 className="text-l font-bold">{t('profile.cvsSection')}</h1>
 
+				{/* TODO: */}
 				<div className="space-y-3">
-					{cvs.length === 0 ? (
-						<p className="py-6 text-sm text-slate-400 text-center border border-dashed rounded-xl">
-							{t('profile.noCvs')}
-						</p>
-					) : (
+					{cvs.length > 0 &&
 						cvs.map(cv => (
 							<div
 								key={cv.id}
@@ -427,127 +390,15 @@ export default function ProfilePage() {
 									</Button>
 								</Link>
 							</div>
-						))
-					)}
+						))}
 				</div>
 			</div>
-
-			{editingProject && (
-				<Dialog
-					open={!!editingProject}
-					onOpenChange={() => setEditingProject(null)}
-				>
-					<DialogContent className="sm:max-w-[440px]">
-						<DialogHeader>
-							<DialogTitle className="text-sm font-bold uppercase tracking-wider text-slate-500">
-								{editingProject.id
-									? t('profile.dialog.editTitle')
-									: t('profile.dialog.createTitle')}
-							</DialogTitle>
-						</DialogHeader>
-
-						<div className="space-y-4 py-2">
-							<Input
-								placeholder={t('profile.dialog.projectName')}
-								value={editingProject.name}
-								onChange={e =>
-									setEditingProject(p => ({ ...p, name: e.target.value }))
-								}
-								className="text-sm h-10"
-							/>
-							<div className="grid grid-cols-2 gap-3">
-								<Input
-									type="date"
-									value={editingProject.startDate?.substring(0, 10) || ''}
-									onChange={e =>
-										setEditingProject(p => ({
-											...p,
-											startDate: e.target.value
-										}))
-									}
-									className="text-sm h-10"
-								/>
-								<Input
-									type="date"
-									value={editingProject.endDate?.substring(0, 10) || ''}
-									onChange={e =>
-										setEditingProject(p => ({ ...p, endDate: e.target.value }))
-									}
-									className="text-sm h-10"
-								/>
-							</div>
-							<Textarea
-								rows={4}
-								placeholder="Description (Markdown supported)"
-								value={editingProject.description}
-								onChange={e =>
-									setEditingProject(p => ({
-										...p,
-										description: e.target.value
-									}))
-								}
-								className="text-sm font-mono resize-none"
-							/>
-							<div className="space-y-2">
-								<Input
-									placeholder="Add tag + Enter..."
-									value={tagInput}
-									onChange={e => setTagInput(e.target.value)}
-									onKeyDown={e => {
-										if (e.key === 'Enter' && tagInput.trim()) {
-											e.preventDefault()
-											const tag = tagInput.trim().toLowerCase()
-											if (!editingProject.tags?.includes(tag)) {
-												setEditingProject(p => ({
-													...p,
-													tags: [...(p.tags || []), tag]
-												}))
-											}
-											setTagInput('')
-										}
-									}}
-									className="text-sm h-10"
-								/>
-								<div className="flex flex-wrap gap-1.5">
-									{editingProject.tags?.map(t => (
-										<span
-											key={t}
-											className="inline-flex items-center gap-1.5 text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 font-medium"
-										>
-											#{t}
-											<X
-												className="h-3.5 w-3.5 cursor-pointer hover:text-red-500"
-												onClick={() =>
-													setEditingProject(p => ({
-														...p,
-														tags: p.tags.filter(tag => tag !== t)
-													}))
-												}
-											/>
-										</span>
-									))}
-								</div>
-							</div>
-						</div>
-
-						<DialogFooter className="gap-2 sm:gap-0 pt-2">
-							<Button
-								variant="ghost"
-								onClick={() => setEditingProject(null)}
-								className="text-sm h-10"
-							>
-								{t('profile.dialog.btnCancel')}
-							</Button>
-							<Button
-								onClick={() => saveProjectMutation.mutate(editingProject)}
-								className="text-sm h-10"
-							>
-								{t('profile.dialog.btnSave')}
-							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
-			)}
+			<ProfileDialog
+				editingProject={editingProject}
+				setEditingProject={setEditingProject}
+				onSave={project => saveProjectMutation.mutate(project)}
+				t={t}
+			/>
 		</div>
 	)
 }

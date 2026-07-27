@@ -104,7 +104,12 @@ export function PositionsTable({
 								<TableCell>
 									<div className="flex flex-wrap gap-1">
 										{pos.projectTags?.map(tag => (
-											<Badge key={tag}>{tag}</Badge>
+											<Badge
+												key={tag}
+												variant="secondary"
+											>
+												{tag}
+											</Badge>
 										))}
 									</div>
 								</TableCell>
@@ -112,7 +117,10 @@ export function PositionsTable({
 								<TableCell>
 									<div className="flex flex-wrap gap-1">
 										{pos.templateAttributes?.map(pta => (
-											<Badge key={pta.attributeId}>
+											<Badge
+												key={pta.attributeId}
+												variant="secondary"
+											>
 												{pta.attributeLibrary?.name}
 											</Badge>
 										))}

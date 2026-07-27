@@ -89,18 +89,8 @@ async function deleteAttribute(req, res) {
 }
 
 router.get(['/'], requireAuth, getAttributes)
-router.post(
-	['/', '/library'],
-	requireAuth,
-	requireRecruiterOrAdmin,
-	saveAttribute
-)
-router.put(
-	['/:id', '/library/:id'],
-	requireAuth,
-	requireRecruiterOrAdmin,
-	saveAttribute
-)
+router.post(['/'], requireAuth, requireRecruiterOrAdmin, saveAttribute)
+router.put(['/:id'], requireAuth, requireRecruiterOrAdmin, saveAttribute)
 router.delete('/:id', requireAuth, requireRecruiterOrAdmin, deleteAttribute)
 
 export default router

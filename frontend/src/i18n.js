@@ -154,13 +154,8 @@ const resources = {
 				}
 			},
 			profile: {
-				title: 'Candidate Profile',
-				subtitle:
-					'Manage your qualifications, tech stack attributes, and personal details.',
-				loading: 'Loading profile data...',
 				notFound: 'User profile not found.',
 				saving: 'Saving changes...',
-				personalInfo: 'Personal Information',
 				email: 'Email Address',
 				firstName: 'First Name',
 				lastName: 'Last Name',
@@ -184,8 +179,8 @@ const resources = {
 				infoSection: 'Info',
 				firstNameLabel: 'First Name',
 				lastNameLabel: 'Last Name',
-				locationLabel: 'Location (e.g. City, Country)',
-				selectAttributePlaceholder: 'Select attribute to add...',
+				locationLabel: 'Location',
+				selectAttributePlaceholder: 'Select attribute',
 				projectsSection: 'Projects',
 				btnAddProject: 'Add Project',
 				noProjects: 'No projects added yet.',
@@ -194,10 +189,13 @@ const resources = {
 				noCvs: 'No CVs generated yet.',
 				untitledPosition: 'Untitled Position',
 				btnOpenCv: 'Open CV',
+				btnAdd: 'Add',
 				dialog: {
 					editTitle: 'Edit Project',
 					createTitle: 'New Project',
-					projectName: 'Project Name',
+					projectName: 'Name',
+					projectDesc: 'Description',
+					projectTags: 'Tag + Enter',
 					btnCancel: 'Cancel',
 					btnSave: 'Save'
 				}
@@ -362,13 +360,8 @@ const resources = {
 				}
 			},
 			profile: {
-				title: 'Профиль кандидата',
-				subtitle:
-					'Управляйте своими квалификационными характеристиками, технологическим стеком и личными данными.',
-				loading: 'Загрузка данных профиля...',
 				notFound: 'Профиль пользователя не найден.',
 				saving: 'Сохранение изменений...',
-				personalInfo: 'Личная информация',
 				email: 'Электронная почта',
 				firstName: 'Имя',
 				lastName: 'Фамилия',
@@ -392,20 +385,22 @@ const resources = {
 				infoSection: 'Информация',
 				firstNameLabel: 'Имя',
 				lastNameLabel: 'Фамилия',
-				locationLabel: 'Локация (например, Город, Страна)',
-				selectAttributePlaceholder: 'Выберите атрибут для добавления...',
+				locationLabel: 'Локация',
+				selectAttributePlaceholder: 'Выберите атрибут',
 				projectsSection: 'Проекты',
 				btnAdd: 'Добавить',
 				noProjects: 'Проекты пока не добавлены.',
 				presentDate: 'По настоящее время',
-				cvsSection: 'Резюме (CV)',
+				cvsSection: 'Резюме',
 				noCvs: 'Резюме еще не создавались.',
 				untitledPosition: 'Позиция без названия',
 				btnOpenCv: 'Открыть CV',
 				dialog: {
 					editTitle: 'Редактировать проект',
 					createTitle: 'Новый проект',
-					projectName: 'Название проекта',
+					projectName: 'Название',
+					projectDesc: 'Описание',
+					projectTags: 'Тег + Enter',
 					btnCancel: 'Отмена',
 					btnSave: 'Сохранить'
 				}
