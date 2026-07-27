@@ -153,14 +153,12 @@ export default function CvConstructor() {
 												{isCandidate && (
 													<Button
 														variant="ghost"
-														size="sm"
 														onClick={() => {
 															setEditingAttrId(attrId)
 															setEditValue(attr.value || '')
 														}}
-														className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
 													>
-														<Edit2 className="h-3 w-3" />
+														<Edit2 />
 													</Button>
 												)}
 											</>

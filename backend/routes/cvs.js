@@ -45,17 +45,7 @@ router.get('/position/:positionId', async (req, res) => {
 			})
 		}
 
-		const [candidateUser, userProfileAttrs, projects] = await Promise.all([
-			prisma.user.findUnique({
-				where: { id: userId },
-				select: {
-					id: true,
-					firstName: true,
-					lastName: true,
-					email: true,
-					role: true
-				}
-			}),
+		const [userProfileAttrs, projects] = await Promise.all([
 			prisma.profileAttributeValue.findMany({
 				where: {
 					userId,
@@ -82,15 +72,14 @@ router.get('/position/:positionId', async (req, res) => {
 			value:
 				userProfileAttrs.find(pa => pa.attributeId === pta.attributeId)
 					?.value || '',
-			AttributeLibrary: pta.AttributeLibrary || pta.attributeLibrary
+			AttributeLibrary: pta.attributeLibrary
 		}))
 
 		res.json({
 			cv,
 			attributes,
 			projects,
-			maxProjects: position.maxProjects || 3,
-			candidateInfo: candidateUser
+			maxProjects: position.maxProjects || 3
 		})
 	} catch (err) {
 		console.error(err)
