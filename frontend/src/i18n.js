@@ -115,7 +115,7 @@ const resources = {
 					createTitle: 'New Project',
 					projectName: 'Name',
 					projectDesc: 'Description',
-					projectTags: 'Tag + Enter',
+					projectTags: 'Tags',
 					btnCancel: 'Cancel',
 					btnSave: 'Save'
 				}
@@ -233,7 +233,7 @@ const resources = {
 					createTitle: 'Новый проект',
 					projectName: 'Название',
 					projectDesc: 'Описание',
-					projectTags: 'Тег + Enter',
+					projectTags: 'Теги',
 					btnCancel: 'Отмена',
 					btnSave: 'Сохранить'
 				}

@@ -71,7 +71,7 @@ router.put('/autosave', async (req, res) => {
 		const updatePromises = Object.entries(attributes).map(([attrValId, val]) =>
 			prisma.profileAttributeValue.updateMany({
 				where: { id: attrValId, userId: req.userId },
-				data: { value: String(val) }
+				data: { value: val }
 			})
 		)
 		await Promise.all(updatePromises)

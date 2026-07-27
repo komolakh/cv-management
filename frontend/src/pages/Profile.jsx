@@ -78,7 +78,7 @@ export default function ProfilePage() {
 		if (profileData) {
 			const initialAttrs = {}
 			profileData.userAttributes?.forEach(attr => {
-				initialAttrs[attr.id] = attr.value || ''
+				initialAttrs[attr.id] = attr.value
 			})
 			reset({
 				firstName: profileData.user?.firstName || clerkUser?.firstName || '',
@@ -98,11 +98,16 @@ export default function ProfilePage() {
 				attributes: attrs,
 				version: profileData?.user?.version || 1
 			})
-			return { newVersion: res.data.newVersion, updatedMe: me }
+			return {
+				newVersion: res.data.newVersion,
+				updatedMe: me,
+				updatedAttrs: attrs
+			}
 		},
 		onSuccess: ({ newVersion, updatedMe }) => {
 			queryClient.setQueryData(['profile'], old => {
 				if (!old) return old
+
 				return {
 					...old,
 					user: { ...old.user, ...updatedMe, version: newVersion }

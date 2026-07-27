@@ -1,4 +1,8 @@
-import { Badge } from '@/components/ui/badge'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -8,9 +12,16 @@ import {
 	DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+
+const projectSchema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+	description: z.string().optional(),
+	tagsInput: z.string().optional()
+})
 
 export function ProfileDialog({
 	editingProject,
@@ -18,34 +29,58 @@ export function ProfileDialog({
 	onSave,
 	t
 }) {
-	const [tagInput, setTagInput] = useState('')
-	const [localProject, setLocalProject] = useState(editingProject)
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors }
+	} = useForm({
+		resolver: zodResolver(projectSchema),
+		defaultValues: {
+			name: '',
+			startDate: '',
+			endDate: '',
+			description: '',
+			tagsInput: ''
+		}
+	})
 
 	useEffect(() => {
-		setLocalProject(editingProject)
-	}, [editingProject])
-
-	if (!localProject) return null
-
-	const handleAddTag = e => {
-		if (e.key === 'Enter' && tagInput.trim()) {
-			e.preventDefault()
-			const tag = tagInput.trim().toLowerCase()
-			if (!localProject.tags?.includes(tag)) {
-				setLocalProject(p => ({
-					...p,
-					tags: [...(p.tags || []), tag]
-				}))
-			}
-			setTagInput('')
+		if (editingProject) {
+			reset({
+				name: editingProject.name ?? '',
+				startDate: editingProject.startDate
+					? editingProject.startDate.substring(0, 10)
+					: '',
+				endDate: editingProject.endDate
+					? editingProject.endDate.substring(0, 10)
+					: '',
+				description: editingProject.description ?? '',
+				tagsInput: Array.isArray(editingProject.tags)
+					? editingProject.tags.join(', ')
+					: ''
+			})
 		}
-	}
+	}, [editingProject, reset])
 
-	const handleRemoveTag = tagToRemove => {
-		setLocalProject(p => ({
-			...p,
-			tags: p.tags.filter(tag => tag !== tagToRemove)
-		}))
+	if (!editingProject) return null
+
+	const handleFormSubmit = data => {
+		const tags = data.tagsInput
+			? data.tagsInput
+					.split(',')
+					.map(tag => tag.trim().toLowerCase())
+					.filter(Boolean)
+			: []
+
+		onSave({
+			...editingProject,
+			name: data.name,
+			startDate: data.startDate || null,
+			endDate: data.endDate || null,
+			description: data.description,
+			tags
+		})
 	}
 
 	return (
@@ -56,76 +91,72 @@ export function ProfileDialog({
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						{localProject.id
+						{editingProject.id
 							? t('profile.dialog.editTitle')
 							: t('profile.dialog.createTitle')}
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className="space-y-4">
-					<Input
-						placeholder={t('profile.dialog.projectName')}
-						value={localProject.name || ''}
-						onChange={e =>
-							setLocalProject(p => ({ ...p, name: e.target.value }))
-						}
-					/>
-					<div className="grid grid-cols-2 gap-3">
+				<form
+					onSubmit={handleSubmit(handleFormSubmit)}
+					className="space-y-4"
+				>
+					<div className="space-y-1.5">
+						<Label>{t('profile.dialog.projectName')}</Label>
 						<Input
-							type="date"
-							value={localProject.startDate?.substring(0, 10) || ''}
-							onChange={e =>
-								setLocalProject(p => ({ ...p, startDate: e.target.value }))
-							}
+							placeholder={t('profile.dialog.projectName')}
+							{...register('name')}
 						/>
-						<Input
-							type="date"
-							value={localProject.endDate?.substring(0, 10) || ''}
-							onChange={e =>
-								setLocalProject(p => ({ ...p, endDate: e.target.value }))
-							}
-						/>
+						{errors.name && (
+							<p className="text-destructive text-sm">{errors.name.message}</p>
+						)}
 					</div>
-					<Textarea
-						rows={4}
-						placeholder={t('profile.dialog.projectDesc')}
-						value={localProject.description || ''}
-						onChange={e =>
-							setLocalProject(p => ({ ...p, description: e.target.value }))
-						}
-					/>
-					<div className="space-y-2">
-						<Input
-							placeholder={t('profile.dialog.projectTags')}
-							value={tagInput}
-							onChange={e => setTagInput(e.target.value)}
-							onKeyDown={handleAddTag}
-						/>
-						<div className="flex flex-wrap gap-1.5">
-							{localProject.tags?.map(t => (
-								<Badge
-									key={t}
-									variant="secondary"
-								>
-									{t}
-									<X onClick={() => handleRemoveTag(t)} />
-								</Badge>
-							))}
+
+					<div className="grid grid-cols-2 gap-3">
+						<div className="space-y-1.5">
+							<Label>{t('profile.dialog.startDate')}</Label>
+							<Input
+								type="date"
+								{...register('startDate')}
+							/>
+						</div>
+						<div className="space-y-1.5">
+							<Label>{t('profile.dialog.endDate')}</Label>
+							<Input
+								type="date"
+								{...register('endDate')}
+							/>
 						</div>
 					</div>
-				</div>
 
-				<DialogFooter>
-					<Button
-						variant="ghost"
-						onClick={() => setEditingProject(null)}
-					>
-						{t('profile.dialog.btnCancel')}
-					</Button>
-					<Button onClick={() => onSave(localProject)}>
-						{t('profile.dialog.btnSave')}
-					</Button>
-				</DialogFooter>
+					<div className="space-y-1.5">
+						<Label>{t('profile.dialog.projectDesc')}</Label>
+						<Textarea
+							rows={4}
+							placeholder={t('profile.dialog.projectDesc')}
+							{...register('description')}
+						/>
+					</div>
+
+					<div className="space-y-1.5">
+						<Label>{t('profile.dialog.projectTags')}</Label>
+						<Input
+							placeholder="react, typescript, node.js"
+							{...register('tagsInput')}
+						/>
+					</div>
+
+					<DialogFooter>
+						<Button
+							type="button"
+							variant="ghost"
+							onClick={() => setEditingProject(null)}
+						>
+							{t('profile.dialog.btnCancel')}
+						</Button>
+						<Button type="submit">{t('profile.dialog.btnSave')}</Button>
+					</DialogFooter>
+				</form>
 			</DialogContent>
 		</Dialog>
 	)
