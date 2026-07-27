@@ -88,7 +88,7 @@ async function deleteAttribute(req, res) {
 	}
 }
 
-router.get(['/', '/library'], requireAuth, getAttributes)
+router.get(['/'], requireAuth, getAttributes)
 router.post(
 	['/', '/library'],
 	requireAuth,

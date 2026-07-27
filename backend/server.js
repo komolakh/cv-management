@@ -37,14 +37,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-app.use((req, res, next) => {
-	if (req.method === 'OPTIONS') {
-		cors(corsOptions)(req, res, next)
-	} else {
-		next()
-	}
-})
-
 app.use(express.json({ limit: '10mb' }))
 
 app.use((req, res, next) => {

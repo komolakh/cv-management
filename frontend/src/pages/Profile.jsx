@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import {
 	Calendar,
+	Loader2,
 	MapPin,
 	MoreVertical,
 	Plus,
@@ -64,8 +65,7 @@ export default function ProfilePage() {
 
 	const { data: libraryAttributes = [] } = useQuery({
 		queryKey: ['attributeLibrary'],
-		queryFn: async () =>
-			(await axios.get('/api/attributes/library')).data || [],
+		queryFn: async () => (await axios.get('/api/attributes')).data || [],
 		enabled: isLoaded && isSignedIn
 	})
 
@@ -162,8 +162,8 @@ export default function ProfilePage() {
 
 	if (!isClerkLoaded || isRoleLoading || isLoading) {
 		return (
-			<div className="flex h-48 items-center justify-center text-xs text-slate-400">
-				{t('profile.loading')}
+			<div className="flex h-48 items-center justify-center">
+				<Loader2 className=" animate-spin " />
 			</div>
 		)
 	}
@@ -172,8 +172,8 @@ export default function ProfilePage() {
 	const cvs = profileData?.cvs || []
 
 	return (
-		<div className="container mx-auto max-w-2xl p-6 space-y-8 text-slate-900 dark:text-slate-100">
-			<div className="flex items-center gap-5 pb-6 border-b border-slate-200 dark:border-slate-800">
+		<div className="container mx-auto max-w-4xl p-6">
+			<div className="flex items-center gap-5 pb-6 border-b ">
 				<div className="h-20 w-20 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
 					{watchedValues?.photoUrl ? (
 						<img
@@ -232,7 +232,7 @@ export default function ProfilePage() {
 			</div>
 
 			<div className="space-y-4 pt-2">
-				<SectionHeader title={t('profile.infoSection', 'Info')} />
+				<h1>{t('profile.infoSection')} </h1>
 
 				{!isReadOnly && (
 					<div className="flex gap-2">
@@ -301,7 +301,7 @@ export default function ProfilePage() {
 
 			<div className="space-y-4 pt-2">
 				<div className="flex justify-between items-center">
-					<SectionHeader title={t('profile.projectsSection', 'Projects')} />
+					<h1>{t('profile.projectsSection', 'Projects')}</h1>
 					{!isReadOnly && (
 						<Button
 							size="sm"
@@ -396,7 +396,8 @@ export default function ProfilePage() {
 			</div>
 
 			<div className="space-y-4 pt-2">
-				<SectionHeader title={t('profile.cvsSection', 'CVs')} />
+				<h1>{t('profile.cvsSection', 'CVs')}</h1>
+
 				<div className="space-y-3">
 					{cvs.length === 0 ? (
 						<p className="py-6 text-sm text-slate-400 text-center border border-dashed rounded-xl">
