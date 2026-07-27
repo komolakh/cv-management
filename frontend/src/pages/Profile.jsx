@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import {
+	ArrowRight,
 	Calendar,
 	Loader2,
 	MapPin,
@@ -364,29 +365,22 @@ export default function ProfilePage() {
 			<div className="space-y-4 pt-2">
 				<h1 className="text-l font-bold">{t('profile.cvsSection')}</h1>
 
-				{/* TODO: */}
 				<div className="space-y-3">
 					{cvs.length > 0 &&
 						cvs.map(cv => (
 							<div
 								key={cv.id}
-								className="flex justify-between items-center p-4 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900/40 shadow-sm"
+								className="flex justify-between p-4 border rounded-md"
 							>
 								<div>
-									<p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
-										{cv.position?.title || t('profile.untitledPosition')}
-									</p>
-									<p className="text-xs text-slate-400 mt-0.5">
+									<p className="font-semibold ">{cv.position?.title}</p>
+									<p className="text-xs text-slate-500 mt-1">
 										{new Date(cv.createdAt).toLocaleDateString()}
 									</p>
 								</div>
-								<Link to={`/cv/${cv.id}`}>
-									<Button
-										variant="outline"
-										size="sm"
-										className="text-xs h-9"
-									>
-										{t('profile.btnOpenCv')} →
+								<Link to={`/cv/${cv.positionId}`}>
+									<Button variant="outline">
+										<ArrowRight />
 									</Button>
 								</Link>
 							</div>

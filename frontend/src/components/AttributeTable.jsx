@@ -60,9 +60,15 @@ export function AttributeTable({
 								/>
 							</TableHead>
 						)}
-						<TableHead>{t('attributeLibrary.tableCategory')}</TableHead>
-						<TableHead>{t('attributeLibrary.tableName')}</TableHead>
-						<TableHead>{t('attributeLibrary.tableType')}</TableHead>
+						<TableHead className="font-semibold">
+							{t('attributeLibrary.tableCategory')}
+						</TableHead>
+						<TableHead className="font-semibold">
+							{t('attributeLibrary.tableName')}
+						</TableHead>
+						<TableHead className="font-semibold">
+							{t('attributeLibrary.tableType')}
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>

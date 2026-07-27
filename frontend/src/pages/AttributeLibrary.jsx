@@ -141,7 +141,7 @@ export default function AttributeLibraryPage() {
 	}
 
 	return (
-		<div className="container mx-auto max-w-4xl p-6">
+		<div className="container mx-auto max-w-6xl p-6">
 			<div className="flex items-center justify-between pb-10">
 				<h1 className="text-xl font-bold">{t('attributeLibrary.title')}</h1>
 				{isRecruiter && (

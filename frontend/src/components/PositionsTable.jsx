@@ -28,7 +28,7 @@ export function PositionsTable({
 	return (
 		<div className="space-y-4">
 			{selectedPositionIds.length > 0 && isRecruiter && (
-				<div className="dark:bg-slate-900 dark:text-white bg-zinc-50 text-slate-900 px-4 py-2.5 rounded-md flex items-center gap-2">
+				<div className="px-4 py-2.5 rounded-md flex items-center gap-2">
 					{selectedPositionIds.length === 1 && (
 						<Button
 							variant="outline"
@@ -72,10 +72,18 @@ export function PositionsTable({
 								/>
 							</TableHead>
 						)}
-						<TableHead>{t('positionsPage.tableColTitle')}</TableHead>
-						<TableHead>{t('positionsPage.tableColDesc')}</TableHead>
-						<TableHead>{t('positionsPage.tableColTags')}</TableHead>
-						<TableHead>{t('positionsPage.tableColAttrs')}</TableHead>
+						<TableHead className="font-semibold">
+							{t('positionsPage.tableColTitle')}
+						</TableHead>
+						<TableHead className="font-semibold">
+							{t('positionsPage.tableColDesc')}
+						</TableHead>
+						<TableHead className="font-semibold">
+							{t('positionsPage.tableColTags')}
+						</TableHead>
+						<TableHead className="font-semibold">
+							{t('positionsPage.tableColAttrs')}
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>

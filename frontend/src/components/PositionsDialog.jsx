@@ -116,6 +116,7 @@ export function PositionsDialog({
 						)}
 					</div>
 
+					<Label>{t('positionsPage.selector.title')}</Label>
 					<Controller
 						name="selectedAttributeIds"
 						control={control}

@@ -46,8 +46,7 @@ function AuthAndSyncHandler() {
 
 	const syncMutation = useMutation({
 		mutationFn: userData => axios.post('/api/auth/sync', userData),
-		onError: err =>
-			console.error(t('sync.error'), err.response?.data || err.message)
+		onError: err => err.response?.data || err.message
 	})
 
 	useEffect(() => {

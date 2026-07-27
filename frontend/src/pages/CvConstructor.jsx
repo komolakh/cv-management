@@ -1,4 +1,4 @@
-import { useAuth, useUser } from '@clerk/clerk-react'
+import { useAuth } from '@clerk/clerk-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Calendar, Check, Edit2, Loader2, Mail } from 'lucide-react'
@@ -15,14 +15,13 @@ import { useUserRole } from '@/hooks/useUserRole'
 export default function CvConstructor() {
 	const { positionId } = useParams()
 	const { getToken, isLoaded, isSignedIn } = useAuth()
-	const { user: clerkUser } = useUser()
 	const { t, i18n } = useTranslation()
 	const queryClient = useQueryClient()
 
 	const [editingAttrId, setEditingAttrId] = useState(null)
 	const [editValue, setEditValue] = useState('')
 
-	const { isCandidate } = useUserRole()
+	const { isCandidate, dbUser } = useUserRole()
 
 	const { data, isLoading } = useQuery({
 		queryKey: ['cvConstructor', positionId],
@@ -82,17 +81,16 @@ export default function CvConstructor() {
 	} = data || {}
 
 	return (
-		<div className="container mx-auto max-w-4xl p-6">
-			<h1 className="text-xl font-bold mb-5">{cv?.position?.title}</h1>
+		<div className="container mx-auto max-w-6xl p-6">
+			<h1 className="text-2xl font-bold mb-5">{cv?.position?.title}</h1>
 
 			<div className="space-y-3">
 				<p className="flex items-center gap-1">
 					<Mail />
-					<span>{clerkUser?.primaryEmailAddress?.emailAddress}</span>
+					<span>{dbUser?.email}</span>
 				</p>
 				<p>
-					{t('cvConstructor.recruitmentStatus')}:{' '}
-					<Badge variant="secondary">{cv?.status}</Badge>
+					{t('cvConstructor.recruitmentStatus')}: <Badge>{cv?.status}</Badge>
 				</p>
 			</div>
 
@@ -171,14 +169,11 @@ export default function CvConstructor() {
 				</section>
 
 				<section className="space-y-2">
-					<div className="flex justify-between items-center border-b pb-1.5">
-						<h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+					<div className="flex justify-between">
+						<h3 className="font-semibold ">
 							{t('cvConstructor.projectsTitle')}
 						</h3>
-						<Badge
-							variant="secondary"
-							className="text-[10px]"
-						>
+						<Badge variant="outline">
 							{t('cvConstructor.templateLimit', {
 								count: projects?.length || 0,
 								max: maxProjects
@@ -186,27 +181,16 @@ export default function CvConstructor() {
 						</Badge>
 					</div>
 
-					{!projects || projects.length === 0 ? (
-						<div className="text-center py-5 border border-dashed rounded-md text-muted-foreground text-xs space-y-1">
-							<p>{t('cvConstructor.noProjects')}</p>
-							<p className="text-[11px]">
-								{t('cvConstructor.requiredTagsLabel')}:{' '}
-								<strong className="text-foreground">
-									{cv?.position?.projectTags?.join(', ') ||
-										t('cvConstructor.noTags')}
-								</strong>
-							</p>
-						</div>
-					) : (
-						<div className="space-y-2.5">
+					{projects.length > 0 && (
+						<div className="space-y-2">
 							{projects.map(proj => (
 								<div
 									key={proj.id}
-									className="p-3.5 border rounded-md bg-background space-y-1.5 text-xs"
+									className="p-3.5 border rounded-md  space-y-2"
 								>
-									<div className="flex justify-between items-start gap-2">
-										<h4 className="font-semibold">{proj.title || proj.name}</h4>
-										<div className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
+									<div className="flex justify-between ">
+										<h3 className="font-semibold">{proj.name}</h3>
+										<div className="flex items-center gap-1 text-xs ">
 											<Calendar className="h-3 w-3" />
 											<span>
 												{formatDate(proj.startDate)} —{' '}
@@ -215,18 +199,16 @@ export default function CvConstructor() {
 										</div>
 									</div>
 
-									<div className="text-muted-foreground prose dark:prose-invert max-w-none text-xs">
-										<ReactMarkdown>{proj.description || ''}</ReactMarkdown>
-									</div>
+									<ReactMarkdown>{proj.description}</ReactMarkdown>
 
-									<div className="flex flex-wrap gap-1 pt-1">
+									<div className="flex flex-wrap gap-2 pt-1">
 										{proj.tags?.map(tag => (
-											<span
+											<Badge
 												key={tag}
-												className="text-[10px] font-mono bg-muted text-muted-foreground px-1.5 py-0.5 rounded"
+												variant="secondary"
 											>
 												{tag}
-											</span>
+											</Badge>
 										))}
 									</div>
 								</div>
