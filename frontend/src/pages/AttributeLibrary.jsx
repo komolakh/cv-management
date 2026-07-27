@@ -23,7 +23,7 @@ const ATTRIBUTE_TYPES = [
 	'STRING',
 	'TEXT',
 	'IMAGE',
-	'NUMERIC',
+	'NUMBER',
 	'DATE',
 	'PERIOD',
 	'BOOLEAN',

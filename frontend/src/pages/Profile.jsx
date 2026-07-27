@@ -264,6 +264,7 @@ export default function ProfilePage() {
 								<Input
 									{...register(`attrs.${attr.id}`)}
 									disabled={isReadOnly}
+									type={attr.type}
 								/>
 							</div>
 							{!isReadOnly && (

@@ -23,7 +23,7 @@ enum AttributeType {
   STRING
   TEXT
   IMAGE
-  NUMERIC
+  NUMBER
   DATE
   PERIOD
   BOOLEAN
