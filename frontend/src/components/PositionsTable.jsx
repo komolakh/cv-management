@@ -21,6 +21,7 @@ export function PositionsTable({
 	toggleSelectRow,
 	isRecruiter,
 	isCandidate,
+	isAdmin,
 	handleEditSelected,
 	duplicateMutation,
 	deleteMutation
@@ -96,7 +97,7 @@ export function PositionsTable({
 							<TableRow
 								key={pos.id}
 								onClick={() =>
-									isCandidate
+									isCandidate && !isAdmin
 										? navigate(`/cv/${pos.id}`)
 										: navigate(`/cvs/${pos.id}`)
 								}
