@@ -124,8 +124,7 @@ const resources = {
 				tableColCandidate: 'Candidate',
 				tableColLocation: 'Location',
 				tableColStatus: 'Status',
-				tableColDate: 'Created At',
-				attributes: 'Attributes'
+				tableColDate: 'Created At'
 			}
 		}
 	},
@@ -249,8 +248,7 @@ const resources = {
 				tableColCandidate: 'Кандидат',
 				tableColLocation: 'Локация',
 				tableColStatus: 'Статус',
-				tableColDate: 'Дата создания',
-				attributes: 'Атрибуты'
+				tableColDate: 'Дата создания'
 			}
 		}
 	}

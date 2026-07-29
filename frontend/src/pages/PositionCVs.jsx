@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import Loader from '@/components/Loader'
 import { Badge } from '@/components/ui/badge'
@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next'
 const PositionCVs = () => {
 	const { positionId } = useParams()
 	const { t } = useTranslation()
-	const navigate = useNavigate()
 
 	const { data: cvs = [], isLoading } = useQuery({
 		queryKey: ['position-cvs', positionId],
@@ -32,93 +31,71 @@ const PositionCVs = () => {
 		return <Loader />
 	}
 
+	const positionAttributes = cvs[0]?.position?.positionTemplateAttributes || []
+	const positionTitle = cvs[0]?.position?.title
+
 	return (
-		<div className="space-y-4">
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead className="font-semibold">
-							{t('cvsPage.tableColCandidate', 'Candidate')}
-						</TableHead>
-						<TableHead className="font-semibold">
-							{t('cvsPage.tableColLocation', 'Location')}
-						</TableHead>
-						<TableHead className="font-semibold">
-							{t('cvsPage.tableColAttributes', 'Attributes')}
-						</TableHead>
-						<TableHead className="font-semibold">
-							{t('cvsPage.tableColStatus', 'Status')}
-						</TableHead>
-						<TableHead className="font-semibold">
-							{t('cvsPage.tableColDate', 'Created At')}
-						</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{cvs.length === 0 ? (
+		<div className="container mx-auto max-w-6xl p-6">
+			<h1 className="text-xl font-bold mb-10">{positionTitle}</h1>
+			<div className="space-y-4">
+				<Table>
+					<TableHeader>
 						<TableRow>
-							<TableCell
-								colSpan={5}
-								className="text-center text-muted-foreground py-6"
-							>
-								{t('cvsPage.noCvs', 'No CVs found for this position')}
-							</TableCell>
+							<TableHead className="font-semibold">
+								{t('cvsPage.tableColCandidate')}
+							</TableHead>
+							<TableHead className="font-semibold">
+								{t('cvsPage.tableColLocation')}
+							</TableHead>
+							{positionAttributes.map(pta => (
+								<TableHead
+									key={pta.attributeId}
+									className="font-semibold"
+								>
+									{pta.attributeLibrary?.name}
+								</TableHead>
+							))}
+							<TableHead className="font-semibold">
+								{t('cvsPage.tableColStatus')}
+							</TableHead>
+							<TableHead className="font-semibold">
+								{t('cvsPage.tableColDate')}
+							</TableHead>
 						</TableRow>
-					) : (
-						cvs.map(cv => (
-							<TableRow
-								key={cv.id}
-								onClick={() => navigate(`/cv/${cv.positionId}/${cv.userId}`)}
-								className="cursor-pointer"
-							>
-								<TableCell className="font-medium flex items-center gap-2">
-									{cv.user?.photoUrl && (
-										<img
-											src={cv.user.photoUrl}
-											alt=""
-											className="w-8 h-8 rounded-full object-cover"
-										/>
-									)}
-									<span>
-										{cv.user?.firstName || cv.user?.lastName
-											? `${cv.user.firstName} ${cv.user.lastName}`
-											: cv.user?.email || 'Unnamed'}
-									</span>
-								</TableCell>
-								<TableCell>{cv.user?.location || '—'}</TableCell>
-								<TableCell>
-									<div className="flex flex-wrap gap-1">
-										{cv.user?.profileAttributeValues?.length > 0 ? (
-											cv.user.profileAttributeValues.map(attr => (
-												<Badge
-													key={attr.id}
-													variant="secondary"
-												>
-													{attr.attributeLibrary?.name}: {attr.value}
-												</Badge>
-											))
-										) : (
-											<span className="text-muted-foreground">—</span>
-										)}
-									</div>
-								</TableCell>
-								<TableCell>
-									<Badge
-										variant={
-											cv.status === 'PUBLISHED' ? 'default' : 'secondary'
-										}
-									>
-										{cv.status}
-									</Badge>
-								</TableCell>
-								<TableCell>
-									{new Date(cv.createdAt).toLocaleDateString()}
-								</TableCell>
-							</TableRow>
-						))
-					)}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{cvs.length > 0 &&
+							cvs.map(cv => (
+								<TableRow key={cv.id}>
+									<TableCell>
+										{`${cv.user.firstName} ${cv.user.lastName}`}
+									</TableCell>
+									<TableCell>{cv.user?.location}</TableCell>
+
+									{positionAttributes.map(pta => {
+										const userAttr = cv.user?.profileAttributeValues?.find(
+											attr => attr.attributeId === pta.attributeId
+										)
+										return (
+											<TableCell key={pta.attributeId}>
+												{userAttr?.value && (
+													<Badge variant="secondary">{userAttr.value}</Badge>
+												)}
+											</TableCell>
+										)
+									})}
+
+									<TableCell>
+										<Badge variant="secondary">{cv.status}</Badge>
+									</TableCell>
+									<TableCell>
+										{new Date(cv.createdAt).toLocaleDateString()}
+									</TableCell>
+								</TableRow>
+							))}
+					</TableBody>
+				</Table>
+			</div>
 		</div>
 	)
 }

@@ -94,7 +94,15 @@ router.get('/:positionId', async (req, res) => {
 		const cvs = await prisma.cV.findMany({
 			where: { positionId },
 			include: {
-				position: true,
+				position: {
+					include: {
+						positionTemplateAttributes: {
+							include: {
+								attributeLibrary: true
+							}
+						}
+					}
+				},
 				user: {
 					select: {
 						id: true,
@@ -102,7 +110,12 @@ router.get('/:positionId', async (req, res) => {
 						lastName: true,
 						photoUrl: true,
 						location: true,
-						role: true
+						role: true,
+						profileAttributeValues: {
+							include: {
+								attributeLibrary: true
+							}
+						}
 					}
 				}
 			},
