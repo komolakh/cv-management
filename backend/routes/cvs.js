@@ -87,7 +87,7 @@ router.get('/position/:positionId', async (req, res) => {
 	}
 })
 
-router.get('/:positionId/all-cvs', async (req, res) => {
+router.get('/:positionId', async (req, res) => {
 	try {
 		const { positionId } = req.params
 

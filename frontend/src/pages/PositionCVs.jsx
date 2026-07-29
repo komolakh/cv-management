@@ -22,7 +22,7 @@ const PositionCVs = () => {
 	const { data: cvs = [], isLoading } = useQuery({
 		queryKey: ['position-cvs', positionId],
 		queryFn: async () => {
-			const res = await axios.get(`/api/positions/${positionId}/all-cvs`)
+			const res = await axios.get(`/api/cvs/${positionId}`)
 			return res.data
 		},
 		enabled: !!positionId
