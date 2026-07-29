@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 
 import Loader from '@/components/Loader'
 import { Badge } from '@/components/ui/badge'
@@ -18,7 +17,6 @@ import {
 
 export default function Home() {
 	const { t } = useTranslation()
-	const navigate = useNavigate()
 	const [searchQuery, setSearchQuery] = useState('')
 
 	const { data = {}, isLoading } = useQuery({
@@ -76,10 +74,7 @@ export default function Home() {
 					<TableBody>
 						{filteredPositions.length > 0 &&
 							filteredPositions.map(pos => (
-								<TableRow
-									key={pos.id}
-									onClick={() => navigate(`/cv/${pos.id}`)}
-								>
+								<TableRow key={pos.id}>
 									<TableCell>{pos.title}</TableCell>
 									<TableCell>
 										{pos.shortDescription || pos.description}
@@ -109,10 +104,7 @@ export default function Home() {
 					</TableHeader>
 					<TableBody>
 						{popularPositions.slice(0, 5).map((pos, index) => (
-							<TableRow
-								key={pos.id}
-								onClick={() => navigate(`/cv/${pos.id}`)}
-							>
+							<TableRow key={pos.id}>
 								<TableCell>{index + 1}</TableCell>
 								<TableCell>{pos.title}</TableCell>
 								<TableCell>{pos.submittedCvsCount}</TableCell>

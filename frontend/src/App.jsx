@@ -15,6 +15,7 @@ import AdminPanel from './pages/AdminPanel'
 import AttributeLibraryPage from './pages/AttributeLibrary'
 import CvConstructor from './pages/CvConstructor'
 import Home from './pages/Home'
+import PositionCVs from './pages/PositionCVs'
 import PositionsPage from './pages/Positions'
 import ProfilePage from './pages/Profile'
 
@@ -98,6 +99,10 @@ function MainLayout() {
 					<Route
 						path="/cv/:positionId"
 						element={<CvConstructor />}
+					/>
+					<Route
+						path="/cvs/:positionId"
+						element={<PositionCVs />}
 					/>
 					<Route
 						path="/attribute-library"

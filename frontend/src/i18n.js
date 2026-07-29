@@ -10,8 +10,8 @@ const resources = {
 				home: 'Home',
 				positions: 'Positions',
 				profile: 'Profile',
-				attributeLibrary: 'Attribute Library',
-				admin: 'Admin Panel',
+				attributeLibrary: 'Attributes',
+				admin: 'Admin',
 				signIn: 'Sign In',
 				signUp: 'Sign Up'
 			},
@@ -119,6 +119,13 @@ const resources = {
 					btnCancel: 'Cancel',
 					btnSave: 'Save'
 				}
+			},
+			cvsPage: {
+				tableColCandidate: 'Candidate',
+				tableColLocation: 'Location',
+				tableColStatus: 'Status',
+				tableColDate: 'Created At',
+				attributes: 'Attributes'
 			}
 		}
 	},
@@ -129,8 +136,8 @@ const resources = {
 				home: 'Главная',
 				positions: 'Позиции',
 				profile: 'Профиль',
-				attributeLibrary: 'Библиотека атрибутов',
-				admin: 'Админ-панель',
+				attributeLibrary: 'Атрибуты',
+				admin: 'Админ',
 				signIn: 'Войти',
 				signUp: 'Регистрация'
 			},
@@ -237,6 +244,13 @@ const resources = {
 					btnCancel: 'Отмена',
 					btnSave: 'Сохранить'
 				}
+			},
+			cvsPage: {
+				tableColCandidate: 'Кандидат',
+				tableColLocation: 'Локация',
+				tableColStatus: 'Статус',
+				tableColDate: 'Дата создания',
+				attributes: 'Атрибуты'
 			}
 		}
 	}

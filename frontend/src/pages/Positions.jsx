@@ -15,7 +15,7 @@ import { useUserRole } from '@/hooks/useUserRole'
 export default function PositionsPage() {
 	const { getToken, isLoaded, isSignedIn } = useAuth()
 	const { isLoaded: isClerkLoaded } = useUser()
-	const { isRecruiter, isLoading: isRoleLoading } = useUserRole()
+	const { isRecruiter, isLoading: isRoleLoading, isCandidate } = useUserRole()
 	const { t } = useTranslation()
 	const queryClient = useQueryClient()
 
@@ -213,6 +213,7 @@ export default function PositionsPage() {
 				toggleSelectAll={toggleSelectAll}
 				toggleSelectRow={toggleSelectRow}
 				isRecruiter={isRecruiter}
+				isCandidate={isCandidate}
 				handleEditSelected={handleEditSelected}
 				duplicateMutation={duplicateMutation}
 				deleteMutation={deleteMutation}

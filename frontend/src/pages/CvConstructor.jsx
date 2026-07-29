@@ -125,6 +125,7 @@ export default function CvConstructor() {
 													onChange={e => setEditValue(e.target.value)}
 													placeholder={t('cvConstructor.enterValuePlaceholder')}
 													autoFocus
+													type={attrType}
 												/>
 												<Button
 													disabled={saveAttrMutation.isPending}

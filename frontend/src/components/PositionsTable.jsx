@@ -12,6 +12,7 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table'
+import { useNavigate } from 'react-router-dom'
 
 export function PositionsTable({
 	positions,
@@ -19,11 +20,13 @@ export function PositionsTable({
 	toggleSelectAll,
 	toggleSelectRow,
 	isRecruiter,
+	isCandidate,
 	handleEditSelected,
 	duplicateMutation,
 	deleteMutation
 }) {
 	const { t } = useTranslation()
+	const navigate = useNavigate()
 
 	return (
 		<div className="space-y-4">
@@ -92,7 +95,11 @@ export function PositionsTable({
 						return (
 							<TableRow
 								key={pos.id}
-								onClick={() => (window.location.href = `/cv/${pos.id}`)}
+								onClick={() =>
+									isCandidate
+										? navigate(`/cv/${pos.id}`)
+										: navigate(`/cvs/${pos.id}`)
+								}
 								className="cursor-pointer "
 							>
 								{isRecruiter && (

@@ -87,4 +87,33 @@ router.get('/position/:positionId', async (req, res) => {
 	}
 })
 
+router.get('/:positionId/all-cvs', async (req, res) => {
+	try {
+		const { positionId } = req.params
+
+		const cvs = await prisma.cV.findMany({
+			where: { positionId },
+			include: {
+				position: true,
+				user: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true,
+						photoUrl: true,
+						location: true,
+						role: true
+					}
+				}
+			},
+			orderBy: { createdAt: 'desc' }
+		})
+
+		return res.json(cvs)
+	} catch (err) {
+		console.error(err)
+		return res.status(500).json({ error: err.message })
+	}
+})
+
 export default router
